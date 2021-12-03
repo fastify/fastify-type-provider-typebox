@@ -4,11 +4,10 @@
   "description": "A Type Provider for Typebox over Fastify",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "dependencies": {
-    "@sinclair/typebox": "^0.23.0"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "fastify": "github:fastify/fastify#next"
+    "fastify": "github:fastify/fastify#next",
+    "@sinclair/typebox": "^0.23.0"
   },
   "scripts": {
     "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",
@@ -30,6 +29,7 @@
   },
   "homepage": "https://github.com/fastify/fastify-type-provider-typebox#readme",
   "devDependencies": {
+    "@types/node": "^16.11.11",
     "fastify-tsconfig": "^1.0.1",
     "rimraf": "^3.0.2",
     "tsd": "^0.19.0"
