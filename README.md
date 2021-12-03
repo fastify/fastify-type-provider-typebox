@@ -13,7 +13,6 @@ npm install @fastify/type-provider-typebox --save
 ```ts
 import Fastify from 'fastify'
 import TypeBoxTypeProvider from '@fastify/type-provider-typebox'
-import { Type } from '@sinclair/typebox'
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 ```
@@ -23,6 +22,7 @@ const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 ```ts
 import Fastify from 'fastify'
 import TypeBoxTypeProvider from '@fastify/type-provider-typebox'
+import { Type } from '@sinclair/typebox'
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 
