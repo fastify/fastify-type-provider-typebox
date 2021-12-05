@@ -1,4 +1,4 @@
-import { TypeBoxTypeProvider } from '../index'
+import { TypeBoxTypeProvider, ajvTypeBoxPlugin } from '../index'
 import { Type } from '@sinclair/typebox'
 import { expectAssignable, expectType } from 'tsd'
 import Fastify, { FastifyInstance, FastifyLoggerInstance, RawReplyDefaultExpression, RawRequestDefaultExpression, RawServerDefault } from 'fastify'
@@ -19,3 +19,6 @@ fastify.get('/', {
   expectType<number>(req.body.y)
   expectType<string>(req.body.x)
 })
+
+expectAssignable<FastifyInstance>(Fastify({ ajv: { plugins: [ajvTypeBoxPlugin] } }))
+expectType<void>(ajvTypeBoxPlugin({ addKeyword: () => {} }))
