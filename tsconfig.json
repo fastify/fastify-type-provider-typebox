@@ -1,0 +1,4 @@
+{
+  "extends": "fastify-tsconfig",
+  "exclude": ["./node_modules", "types/**/*.test-d.ts"]
+}
