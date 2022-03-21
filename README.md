@@ -52,3 +52,38 @@ fastify.get('/', {
   const { x, y, z } = req.body
 })
 ```
+
+## Type definition of FastifyRequest + TypeProvider
+```ts
+import {
+  FastifyReply,
+  FastifyRequest,
+  RawRequestDefaultExpression,
+  RawServerDefault,
+} from 'fastify';
+import { Type } from '@sinclair/typebox';
+import { RouteGenericInterface } from 'fastify/types/route';
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+
+export type FastifyRequestTypebox<TSchema> = FastifyRequest<
+  RouteGenericInterface,
+  RawServerDefault,
+  RawRequestDefaultExpression<RawServerDefault>,
+  TSchema,
+  TypeBoxTypeProvider
+>;
+
+export const CreateProductSchema = {
+  body: Type.Object({
+    name: Type.String(),
+    price: Type.Number(),
+  }),
+};
+
+export const CreateProductHandler = (
+  req: FastifyRequestTypebox<typeof CreateProductSchema>
+) => {
+  // The `name` and `price` types are automatically inferred
+  const { name, price } = req.body;
+};
+```
