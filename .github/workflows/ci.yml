@@ -25,9 +25,7 @@ jobs:
           npm install
 
       - name: Install PeerDeps
-        run: |
-          npm i fastify/fastify#next
-          npm i @sinclair/typebox
+        run: npm i fastify @sinclair/typebox
 
       - name: Run tests
         run: |
