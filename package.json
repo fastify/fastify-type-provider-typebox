@@ -31,7 +31,7 @@
     "@types/node": "^17.0.41",
     "fastify-tsconfig": "^1.0.1",
     "rimraf": "^3.0.2",
-    "tsd": "^0.20.0"
+    "tsd": "^0.21.0"
   },
   "tsd": {
     "directory": "types"
