@@ -87,3 +87,39 @@ export const CreateProductHandler = (
   const { name, price } = req.body;
 };
 ```
+
+## Using fastify instance type in your routes files
+
+In your server creation file 
+```ts
+import Fastify from 'fastify'
+import { ajvTypeBoxPlugin, TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+
+const fastify = Fastify({
+  ajv: {
+    plugins: [ajvTypeBoxPlugin]
+  }
+}).withTypeProvider<TypeBoxTypeProvider>()
+
+export type FastifyInstanceType = typeof fastify;
+
+```
+
+In your route file
+```ts
+import type {FastifyInstanceType} from "index"
+
+export default async function getXYZ(fastify:FastifyInstanceType){
+  fastify.get('/', {
+    schema: {
+      body: Type.Object({
+        x: Type.String(),
+        y: Type.Number(),
+        z: Type.Boolean()
+      })
+    }
+  }, (req) => {
+  // The `x`, `y`, `z` types are automatically inferred
+  const { x, y, z } = req.body
+})
+```
