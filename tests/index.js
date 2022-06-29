@@ -33,6 +33,7 @@ tap.test('should not compile schema with unknown keywords', async t => {
     }, (_req, _res) => { })
     try {
         await fastify.listen({ port: 5000 }) // expect throw
+        t.fail()
     } catch {
         await fastify.close()
         t.pass()
