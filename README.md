@@ -17,19 +17,6 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 ```
 
-**Note**: For [ajv] version 7 and above is required to use the `ajvTypeBoxPlugin`:
-
-```ts
-import Fastify from 'fastify'
-import { ajvTypeBoxPlugin, TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
-
-const fastify = Fastify({
-  ajv: {
-    plugins: [ajvTypeBoxPlugin]
-  }
-}).withTypeProvider<TypeBoxTypeProvider>()
-```
-
 ## Example
 
 ```ts
