@@ -11,7 +11,8 @@
   "scripts": {
     "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",
     "test": "npm run build && npm run typescript && tap tests/index.js",
-    "typescript": "tsd"
+    "typescript": "tsd",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
