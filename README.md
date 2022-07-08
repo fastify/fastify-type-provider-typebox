@@ -89,8 +89,8 @@ fastify.withTypeProvider<TypeBoxTypeProvider>().get('/', {
   schema: {
     querystring: Type.Object({
       x: Type.String(),
-      y: Type.Number(),
-      z: Type.Boolean()
+      y: Type.String(),
+      z: Type.String()
     })
   }
 }, (req) => {
