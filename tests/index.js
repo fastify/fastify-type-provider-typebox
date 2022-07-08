@@ -15,8 +15,7 @@ tap.test('should compile typebox schema without configuration', async t => {
             })
         }
     }, (_req, _res) => { })
-    await fastify.listen({ port: 5000 })
-    await fastify.close()
+    await fastify.ready()
     t.pass()
 })
 
@@ -33,10 +32,9 @@ tap.test('should not compile schema with unknown keywords', async t => {
         }
     }, (_req, _res) => { })
     try {
-        await fastify.listen({ port: 5000 }) // expect throw
+        await fastify.ready() // expect throw
         t.fail()
     } catch {
-        await fastify.close()
         t.pass()
     }
 })
