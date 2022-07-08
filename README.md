@@ -74,6 +74,7 @@ export const CreateProductHandler = (
   const { name, price } = req.body;
 };
 ```
+
 ## Type Compiler
 
 TypeBox provides an optional type compiler that perform very fast runtime type checking for data received on routes. Note this compiler is limited to types expressable through the TypeBox `Type.*` namespace only. To enable this compiler, you can call `.setValidatorCompiler(...)` with the `TypeBoxValidatorCompiler` export provided by this package.
