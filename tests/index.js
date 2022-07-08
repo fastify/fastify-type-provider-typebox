@@ -52,9 +52,7 @@ tap.test('should validate querystring parameters', async t => {
             })
         }
     }, (req, res) => res.send(req.query))
-    await fastify.listen({ port: 5000 })
     const { a, b, c } = await fastify.inject().get('/').query({ a: '1', b: '2', c: '3' }).then(res => res.json())
-    await fastify.close()
     if (a === '1' && b === '2' & c === '3') {
         t.pass()
     } else {
@@ -73,13 +71,6 @@ tap.test('should not validate querystring parameters', async t => {
             })
         }
     }, (req, res) => res.send(req.query))
-
-    await fastify.listen({ port: 5000 })
     const statusCode = await fastify.inject().get('/').query({ a: '1', b: '2' }).then(res => res.statusCode)
-    await fastify.close()
-    if (statusCode === 500) {
-        t.pass()
-    } else {
-        t.fail()
-    }
+    t.equal(statusCode, 500)
 })
