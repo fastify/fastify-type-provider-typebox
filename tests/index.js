@@ -55,12 +55,12 @@ tap.test('should validate querystring parameters', async t => {
     }, (req, res) => res.send(req.query))
     await fastify.listen({ port: 5000 })
     const { a, b, c } = await fetch('http://localhost:5000/?a=1&b=2&c=3').then(res => res.json())
+    await fastify.close()
     if(a === '1' && b === '2' & c === '3') {
         t.pass()
     } else {
         t.fail()
     }
-    await fastify.close()
 })
 
 tap.test('should not validate querystring parameters', async t => {
@@ -76,10 +76,10 @@ tap.test('should not validate querystring parameters', async t => {
     }, (req, res) => res.send(req.query))
     await fastify.listen({ port: 5000 })
     const status = await fetch('http://localhost:5000/?a=1&b=2').then(res => res.status)
+    await fastify.close()
     if(status !== 500) {
         t.fail()
     } else {
         t.pass()
     }
-    await fastify.close()
 })
