@@ -2,7 +2,6 @@ const tap = require('tap')
 const Fastify = require('fastify')
 const { Type } = require('@sinclair/typebox')
 const { TypeBoxValidatorCompiler } = require('../dist/index')
-const fetch = require('node-fetch')
 
 // This test ensures AJV ignores the TypeBox [Kind] symbol property in strict
 tap.test('should compile typebox schema without configuration', async t => {
@@ -54,9 +53,9 @@ tap.test('should validate querystring parameters', async t => {
         }
     }, (req, res) => res.send(req.query))
     await fastify.listen({ port: 5000 })
-    const { a, b, c } = await fetch('http://localhost:5000/?a=1&b=2&c=3').then(res => res.json())
+    const { a, b, c } = await fastify.inject().get('/').query({ a: '1', b: '2', c: '3' }).then(res => res.json())
     await fastify.close()
-    if(a === '1' && b === '2' & c === '3') {
+    if (a === '1' && b === '2' & c === '3') {
         t.pass()
     } else {
         t.fail()
@@ -74,12 +73,13 @@ tap.test('should not validate querystring parameters', async t => {
             })
         }
     }, (req, res) => res.send(req.query))
+
     await fastify.listen({ port: 5000 })
-    const status = await fetch('http://localhost:5000/?a=1&b=2').then(res => res.status)
+    const statusCode = await fastify.inject().get('/').query({ a: '1', b: '2' }).then(res => res.statusCode)
     await fastify.close()
-    if(status !== 500) {
-        t.fail()
-    } else {
+    if (statusCode === 500) {
         t.pass()
+    } else {
+        t.fail()
     }
 })
