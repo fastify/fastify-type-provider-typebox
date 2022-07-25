@@ -5,7 +5,7 @@ A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox)
 ## Installation
 
 ```sh
-npm install @fastify/type-provider-typebox --save
+npm i @fastify/type-provider-typebox
 ```
 
 ## Usage
