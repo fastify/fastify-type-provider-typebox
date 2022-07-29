@@ -75,6 +75,32 @@ export const CreateProductHandler = (
 };
 ```
 
+
+## Plugin definition
+
+> **Note**
+> When using plugin types, withTypeProvider is not required in order to register the plugin
+
+```ts
+import { Type } from '@sinclair/typebox';
+import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
+
+const plugin: FastifyPluginAsyncTypebox = async function(fastify, _opts) {
+  fastify.get('/', {
+    schema: {
+      body: Type.Object({
+        x: Type.String(),
+        y: Type.Number(),
+        z: Type.Boolean()
+      })
+    }
+  }, (req) => {
+    /// The `x`, `y`, and `z` types are automatically inferred
+    const { x, y, z } = req.body
+  });
+}
+```
+
 ## Type Compiler
 
 TypeBox provides an optional type compiler that perform very fast runtime type checking for data received on routes. Note this compiler is limited to types expressable through the TypeBox `Type.*` namespace only. To enable this compiler, you can call `.setValidatorCompiler(...)` with the `TypeBoxValidatorCompiler` export provided by this package.

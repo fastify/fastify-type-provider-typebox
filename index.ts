@@ -1,4 +1,12 @@
-import { FastifySchemaCompiler, FastifyTypeProvider } from "fastify"
+import {
+  FastifyPluginAsync,
+  FastifyPluginCallback,
+  FastifyPluginOptions,
+  FastifySchemaCompiler,
+  FastifyTypeProvider,
+  RawServerBase,
+  RawServerDefault
+} from "fastify"
 import { TypeCompiler, ValueError } from '@sinclair/typebox/compiler'
 import { Static, TSchema } from '@sinclair/typebox'
 
@@ -42,3 +50,39 @@ export class TypeBoxValidationError extends Error {
 export interface TypeBoxTypeProvider extends FastifyTypeProvider {
   output: this['input'] extends TSchema ? Static<this['input']> : never
 }
+
+
+
+/**
+ * FastifyPluginCallback with Typebox automatic type inference
+ * 
+ * @example
+ * ```typescript
+ * import { FastifyPluginCallbackTypebox } fromg "@fastify/type-provider-typebox"
+ * 
+ * const plugin: FastifyPluginCallbackTypebox = (fastify, options, done) => {
+ *   done()
+ * }
+ * ```
+ */
+export type FastifyPluginCallbackTypebox<
+    Options extends FastifyPluginOptions = Record<never, never>,
+    Server extends RawServerBase = RawServerDefault,
+> = FastifyPluginCallback<Options, Server, TypeBoxTypeProvider>
+
+
+/**
+ * FastifyPluginAsync with Typebox automatic type inference
+ * 
+ * @example
+ * ```typescript
+ * import { FastifyPluginAsyncTypebox } fromg "@fastify/type-provider-typebox"
+ * 
+ * const plugin: FastifyPluginAsyncTypebox = async (fastify, options) => {
+ * }
+ * ```
+ */
+export type FastifyPluginAsyncTypebox<
+  Options extends FastifyPluginOptions = Record<never, never>,
+  Server extends RawServerBase = RawServerDefault
+> = FastifyPluginAsync<Options, Server, TypeBoxTypeProvider>
