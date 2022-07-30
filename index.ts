@@ -7,14 +7,8 @@ import {
   RawServerBase,
   RawServerDefault
 } from "fastify"
-import { TypeCompiler, ValueError } from '@sinclair/typebox/compiler'
+import { TypeCompiler } from '@sinclair/typebox/compiler'
 import { Static, TSchema } from '@sinclair/typebox'
-
-export class TypeBoxValidationError extends Error {
-  constructor(public readonly errors: ValueError[]) {
-      super('[' + errors.map(({ path, message }) => `['${path}', '${message}']`).join(', ') + ']')
-  }
-}
 
 /** 
  * Enables TypeBox schema validation
