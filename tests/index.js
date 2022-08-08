@@ -70,5 +70,20 @@ tap.test('should not validate querystring parameters', async t => {
     }
   }, (req, res) => res.send(req.query))
   const statusCode = await fastify.inject().get('/').query({ a: '1', b: '2' }).then(res => res.statusCode)
-  t.equal(statusCode, 500)
+  t.equal(statusCode, 400)
+})
+
+tap.test('should return validation error message on response', async t => {
+  t.plan(1)
+  const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).get('/', {
+    schema: {
+      querystring: Type.Object({
+        a: Type.String(),
+        b: Type.String(),
+        c: Type.String()
+      })
+    }
+  }, (req, res) => res.send(req.query))
+  const response = await fastify.inject().get('/').query({ a: '1', b: '2' }).then(res => res.json())
+  t.equal(response.message.indexOf('querystring/c'), 0)
 })

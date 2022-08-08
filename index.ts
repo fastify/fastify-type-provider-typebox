@@ -7,14 +7,8 @@ import {
   RawServerBase,
   RawServerDefault
 } from "fastify"
-import { TypeCompiler, ValueError } from '@sinclair/typebox/compiler'
+import { TypeCompiler } from '@sinclair/typebox/compiler'
 import { Static, TSchema } from '@sinclair/typebox'
-
-export class TypeBoxValidationError extends Error {
-  constructor(public readonly errors: ValueError[]) {
-      super('[' + errors.map(({ path, message }) => `['${path}', '${message}']`).join(', ') + ']')
-  }
-}
 
 /** 
  * Enables TypeBox schema validation
@@ -29,11 +23,18 @@ export class TypeBoxValidationError extends Error {
  export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema }) => {
   const typeCheck = TypeCompiler.Compile(schema)
   return (value): any => {
-      if (typeCheck.Check(value)) return
-      // Future: Consider returning FastifySchemaValidationError[] structure instead of throw. The TypeBoxValidationError 
-      // does generates human readable (and parsable) error messages, however the FastifySchemaValidationError may be a
-      // better fit as it would allow Fastify to standardize on error reporting. For consideration.
-      throw new TypeBoxValidationError([...typeCheck.Errors(value)])
+    if (typeCheck.Check(value)) return
+    const errors = [...typeCheck.Errors(value)]
+    return {
+      // Note: Here we return a FastifySchemaValidationError[] result. As of writing, Fastify
+      // does not currently export this type. Future revisions should uncomment the assertion 
+      // below and return the full set of properties. The specified properties 'message' and
+      // 'instancePath' do however result in a near equivalent error messages to Ajv. 
+      error: errors.map((error) => ({
+        message: `${error.message}`,
+        instancePath: error.path
+      })) // as FastifySchemaValidationError[] 
+    } 
   }
 }
 
