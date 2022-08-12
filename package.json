@@ -11,8 +11,8 @@
   "scripts": {
     "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",
     "test": "npm run build && npm run typescript && tap tests/index.js",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --ext .ts --ext .js",
+    "lint:fix": "npm run lint -- --fix",
     "typescript": "tsd",
     "prepublishOnly": "npm run build"
   },

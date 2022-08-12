@@ -11,7 +11,7 @@ fastify.get('/', {
     body: Type.Object({
       x: Type.String(),
       y: Type.Number(),
-      z: Type.Boolean(),
+      z: Type.Boolean()
     })
   }
 }, (req) => {
