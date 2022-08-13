@@ -1,6 +1,7 @@
 import { FastifyPluginAsyncTypebox, FastifyPluginCallbackTypebox } from '../index'
 import { expectType } from 'tsd'
 import Fastify, { FastifyPluginAsync, FastifyPluginCallback } from 'fastify'
+import fp from 'fastify-plugin'
 import { Type } from '@sinclair/typebox'
 import { Http2Server } from 'http2'
 
@@ -68,3 +69,10 @@ const fastify = Fastify()
 
 fastify.register(asyncPlugin)
 fastify.register(callbackPlugin)
+
+const asyncPluginHttpDefault: FastifyPluginAsyncTypebox<{ optionA: string }> = async (fastify, options) => {
+}
+
+fp(asyncPlugin)
+fp(callbackPlugin)
+fp(asyncPluginHttpDefault)
