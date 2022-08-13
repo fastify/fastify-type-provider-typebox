@@ -42,6 +42,22 @@ const asyncPlugin: FastifyPluginAsyncTypebox<{ optionA: string }, Http2Server> =
     expectType<number>(req.body.y)
     expectType<string>(req.body.x)
   })
+
+  fastify.register(async instance => {
+    instance.get('/', {
+      schema: {
+        body: Type.Object({
+          x: Type.String(),
+          y: Type.Number(),
+          z: Type.Boolean()
+        })
+      }
+    }, (req) => {
+      expectType<boolean>(req.body.z)
+      expectType<number>(req.body.y)
+      expectType<string>(req.body.x)
+    })
+  })
 }
 
 const callbackPlugin: FastifyPluginCallbackTypebox<{ optionA: string }, Http2Server> = (fastify, options, done) => {
@@ -62,6 +78,25 @@ const callbackPlugin: FastifyPluginCallbackTypebox<{ optionA: string }, Http2Ser
     expectType<number>(req.body.y)
     expectType<string>(req.body.x)
   })
+
+  fastify.register((instance, _, done) => {
+    instance.get('/', {
+      schema: {
+        body: Type.Object({
+          x: Type.String(),
+          y: Type.Number(),
+          z: Type.Boolean()
+        })
+      }
+    }, (req) => {
+      expectType<boolean>(req.body.z)
+      expectType<number>(req.body.y)
+      expectType<string>(req.body.x)
+    })
+
+    done()
+  })
+
   done()
 }
 
