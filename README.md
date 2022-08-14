@@ -2,6 +2,12 @@
 
 A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox)
 
+## Overview
+
+This package is the Type Provider for the `@sinclair/typebox` runtime type library. It enables Fastify to automatically infer `Request` and `Reply` types for schemas specified as TypeBox types.
+
+This provider re-exports a specialized `Type` builder from TypeBox which offers some additional extension types specific to Fastify. It also provides optional support for the TypeBox validation compiler.
+
 ## Installation
 
 ```sh
@@ -21,8 +27,7 @@ const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 
 ```ts
 import Fastify from 'fastify'
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
-import { Type } from '@sinclair/typebox'
+import { Type, TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 
@@ -48,15 +53,15 @@ import {
   RawRequestDefaultExpression,
   RawServerDefault,
 } from 'fastify';
-import { Type } from '@sinclair/typebox';
-import { RouteGenericInterface } from 'fastify/types/route';
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
-export type FastifyRequestTypebox<TSchema> = FastifyRequest<
+import { RouteGenericInterface } from 'fastify/types/route';
+import { Type, TSchema, TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+
+export type FastifyRequestTypebox<Schema extends TSchema> = FastifyRequest<
   RouteGenericInterface,
   RawServerDefault,
   RawRequestDefaultExpression<RawServerDefault>,
-  TSchema,
+  Schema,
   TypeBoxTypeProvider
 >;
 
@@ -82,8 +87,7 @@ export const CreateProductHandler = (
 > When using plugin types, withTypeProvider is not required in order to register the plugin
 
 ```ts
-import { Type } from '@sinclair/typebox';
-import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
+import { Type, FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 
 const plugin: FastifyPluginAsyncTypebox = async function(fastify, _opts) {
   fastify.get('/', {
@@ -106,8 +110,7 @@ const plugin: FastifyPluginAsyncTypebox = async function(fastify, _opts) {
 TypeBox provides an optional type compiler that perform very fast runtime type checking for data received on routes. Note this compiler is limited to types expressable through the TypeBox `Type.*` namespace only. To enable this compiler, you can call `.setValidatorCompiler(...)` with the `TypeBoxValidatorCompiler` export provided by this package.
 
 ```ts
-import { TypeBoxTypeProvider, TypeBoxValidatorCompiler } from '@fastify/type-provider-typebox'
-import { Type } from '@sinclair/typebox'
+import { Type, TypeBoxTypeProvider, TypeBoxValidatorCompiler } from '@fastify/type-provider-typebox'
 import Fastify from 'fastify'
 
 const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler)
