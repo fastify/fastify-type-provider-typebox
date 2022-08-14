@@ -1,7 +1,6 @@
 const tap = require('tap')
 const Fastify = require('fastify')
-const { Type } = require('@sinclair/typebox')
-const { TypeBoxValidatorCompiler } = require('../dist/index')
+const { Type, TypeBoxValidatorCompiler } = require('../dist/index')
 
 // This test ensures AJV ignores the TypeBox [Kind] symbol property in strict
 tap.test('should compile typebox schema without configuration', async t => {
@@ -86,4 +85,21 @@ tap.test('should return validation error message on response', async t => {
   }, (req, res) => res.send(req.query))
   const response = await fastify.inject().get('/').query({ a: '1', b: '2' }).then(res => res.json())
   t.equal(response.message.indexOf('querystring/c'), 0)
+})
+
+tap.test('should accept date extension type and refine correctly in handler', async t => {
+  t.plan(1)
+  let created = null
+  const fastify = Fastify().post('/', {
+    schema: {
+      body: Type.Object({
+        created: Type.Date()
+      })
+    }
+  }, (req, res) => {
+    created = req.body.created
+    res.json(0)
+  })
+  await fastify.inject().post('/').body({ created: '2022-01-01' }).then(res => res.json())
+  t.equal(typeof created, 'string') // note: not refined to Date
 })
