@@ -52,12 +52,13 @@ import {
   FastifyRequest,
   RawRequestDefaultExpression,
   RawServerDefault,
+  FastifySchema
 } from 'fastify';
 
 import { RouteGenericInterface } from 'fastify/types/route';
 import { Type, TSchema, TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
-export type FastifyRequestTypebox<Schema extends TSchema> = FastifyRequest<
+export type FastifyRequestTypebox<Schema extends FastifySchema> = FastifyRequest<
   RouteGenericInterface,
   RawServerDefault,
   RawRequestDefaultExpression<RawServerDefault>,
