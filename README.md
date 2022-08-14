@@ -56,7 +56,7 @@ import {
 } from 'fastify';
 
 import { RouteGenericInterface } from 'fastify/types/route';
-import { Type, TSchema, TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { Type, TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
 export type FastifyRequestTypebox<Schema extends FastifySchema> = FastifyRequest<
   RouteGenericInterface,
