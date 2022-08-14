@@ -4,9 +4,7 @@ A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox)
 
 ## Overview
 
-This package is the Type Provider for the `@sinclair/typebox` runtime type library. It enables Fastify to automatically infer `Request` and `Reply` types for schemas specified as TypeBox types.
-
-This provider re-exports a specialized `Type` builder from TypeBox which offers some additional extension types specific to Fastify. It also provides optional support for the TypeBox validation compiler.
+This package is the Type Provider for the `@sinclair/typebox` runtime type library. It enables Fastify to automatically infer `Request` and `Reply` types for schemas specified as TypeBox types. This provider exports a custom `Type` builder from TypeBox which includes some extension types specific to Fastify and provides optional support for the TypeBox validation compiler.
 
 ## Installation
 
