@@ -51,7 +51,7 @@ tap.test('should validate querystring parameters', async t => {
     }
   }, (req, res) => res.send(req.query))
   const { a, b, c } = await fastify.inject().get('/').query({ a: '1', b: '2', c: '3' }).then(res => res.json())
-  if (a === '1' && b === '2' & c === '3') {
+  if (a === '1' && b === '2' && c === '3') {
     t.pass()
   } else {
     t.fail()
