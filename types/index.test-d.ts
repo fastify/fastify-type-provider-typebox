@@ -5,6 +5,7 @@ import Fastify, { FastifyInstance, FastifyLoggerInstance, RawReplyDefaultExpress
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 expectAssignable<FastifyInstance<RawServerDefault, RawRequestDefaultExpression, RawReplyDefaultExpression, FastifyLoggerInstance, TypeBoxTypeProvider>>(fastify)
+expectAssignable<FastifyInstance>(fastify)
 
 fastify.get('/', {
   schema: {
