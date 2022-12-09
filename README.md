@@ -52,7 +52,7 @@ import { Type } from '@sinclair/typebox';
 import { RouteGenericInterface } from 'fastify/types/route';
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 
-export type FastifyRequestTypebox<TSchema> = FastifyRequest<
+export type FastifyRequestTypebox<TSchema extends FastifySchema> = FastifyRequest<
   RouteGenericInterface,
   RawServerDefault,
   RawRequestDefaultExpression<RawServerDefault>,
