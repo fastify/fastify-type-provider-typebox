@@ -17,6 +17,17 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 ```
 
+Note that the following will not work:
+
+```ts
+import Fastify from 'fastify'
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+
+const fastify = Fastify()
+
+fastify.withTypeProvider<TypeBoxTypeProvider>()
+```
+
 ## Example
 
 ```ts
