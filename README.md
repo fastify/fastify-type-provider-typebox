@@ -8,11 +8,15 @@ A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox)
 npm i @fastify/type-provider-typebox
 ```
 
+## Overview
+
+This package provides enhanced support for TypeBox by integrating it with the Fastify [Type Provider](https://www.fastify.io/docs/latest/Reference/Type-Providers/) infrastructure. It provides a re-export of the TypeBox `Type.*` builder for convenience as well as providing additional utility types and optional validation infrastructure that can be useful when leveraging TypeBox with Fastify.
+
 ## Usage
 
 ```ts
 import Fastify from 'fastify'
-import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import { Type, TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 ```
