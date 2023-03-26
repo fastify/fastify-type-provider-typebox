@@ -131,3 +131,20 @@ tap.test('should return validation error message if no conversion is possible', 
   const response = await fastify.inject().get('/').query({ a: 'hello', b: '2' }).then(res => res.json())
   t.equal(response.message.indexOf('querystring/a'), 0)
 })
+
+tap.test('should fast serialize for the typebox 0.26.0 allOf intersect representation', async t => {
+  t.plan(2)
+  const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).get('/', {
+    schema: {
+      response: {
+        200: Type.Intersect([
+          Type.Object({ a: Type.Number() }),
+          Type.Object({ b: Type.Number() })
+        ])
+      }
+    }
+  }, (req, res) => res.send({ a: 1, b: 2 }))
+  const response = await fastify.inject().get('/').then(res => res.json())
+  t.equal(response.a, 1)
+  t.equal(response.b, 2)
+})
