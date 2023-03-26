@@ -1,8 +1,7 @@
-import { FastifyPluginAsyncTypebox, FastifyPluginCallbackTypebox } from '../index'
+import { Type, FastifyPluginAsyncTypebox, FastifyPluginCallbackTypebox } from '../index'
 import { expectType } from 'tsd'
 import Fastify, { FastifyPluginAsync, FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
-import { Type } from '@sinclair/typebox'
 import { Http2Server } from 'http2'
 
 // Ensure the defaults of FastifyPluginAsyncTypebox are the same as FastifyPluginAsync
