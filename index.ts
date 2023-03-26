@@ -9,7 +9,8 @@ import {
 } from 'fastify'
 import { TypeCompiler } from '@sinclair/typebox/compiler'
 import { Static, TSchema } from '@sinclair/typebox'
-
+import { Value } from '@sinclair/typebox/value'
+export * from '@sinclair/typebox'
 /**
  * Enables TypeBox schema validation
  *
@@ -20,11 +21,15 @@ import { Static, TSchema } from '@sinclair/typebox'
  * const server = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler)
  * ```
  */
-export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema }) => {
+export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema, httpPart }) => {
   const typeCheck = TypeCompiler.Compile(schema)
   return (value): any => {
-    if (typeCheck.Check(value)) return
-    const errors = [...typeCheck.Errors(value)]
+    // Note: Only support value conversion for querystring, params and header schematics
+    const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
+    if (typeCheck.Check(converted)) {
+      return { value: converted }
+    }
+    const errors = [...typeCheck.Errors(converted)]
     return {
       // Note: Here we return a FastifySchemaValidationError[] result. As of writing, Fastify
       // does not currently export this type. Future revisions should uncomment the assertion
