@@ -1,5 +1,4 @@
-import { TypeBoxTypeProvider } from '../index'
-import { Type } from '@sinclair/typebox'
+import { Type, TypeBoxTypeProvider } from '../index'
 import { expectAssignable, expectType } from 'tsd'
 import Fastify, { FastifyInstance, FastifyLoggerInstance, RawReplyDefaultExpression, RawRequestDefaultExpression, RawServerDefault } from 'fastify'
 
