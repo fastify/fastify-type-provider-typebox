@@ -1,6 +1,6 @@
 {
   "name": "@fastify/type-provider-typebox",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "description": "A Type Provider for Typebox over Fastify",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
