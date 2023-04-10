@@ -54,13 +54,15 @@ fastify.get('/', {
 })
 ```
 
-## Type definition of FastifyRequest + TypeProvider
+## Type definition of FastifyRequest & FastifyReply + TypeProvider
 ```ts
 import {
   FastifyReply,
   FastifyRequest,
   RawRequestDefaultExpression,
   RawServerDefault,
+  RawReplyDefaultExpression,
+  ContextConfigDefault
 } from 'fastify';
 import { RouteGenericInterface } from 'fastify/types/route';
 import { FastifySchema } from 'fastify/types/schema';
@@ -74,18 +76,38 @@ export type FastifyRequestTypebox<TSchema extends FastifySchema> = FastifyReques
   TypeBoxTypeProvider
 >;
 
+export type FastifyReplyTypebox<TSchema extends FastifySchema> = FastifyReply<
+  RawServerDefault,
+  RawRequestDefaultExpression,
+  RawReplyDefaultExpression,
+  RouteGenericInterface,
+  ContextConfigDefault,
+  TSchema,
+  TypeBoxTypeProvider
+>
+
 export const CreateProductSchema = {
   body: Type.Object({
     name: Type.String(),
     price: Type.Number(),
   }),
+  response: {
+    201: Type.Object({
+      id: Type.Number(),
+    }),
+  },
 };
 
 export const CreateProductHandler = (
-  req: FastifyRequestTypebox<typeof CreateProductSchema>
+  req: FastifyRequestTypebox<typeof CreateProductSchema>,
+  reply: FastifyReplyTypebox<typeof CreateProductSchema>
 ) => {
   // The `name` and `price` types are automatically inferred
   const { name, price } = req.body;
+
+  // The response body type is automatically inferred
+  reply.status(201).send({ id: 'string-value' });
+  //                       ^? error TS2322: Type 'string' is not assignable to type 'number'.
 };
 ```
 
