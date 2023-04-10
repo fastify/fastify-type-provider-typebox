@@ -1,9 +1,9 @@
 import { Type, TypeBoxTypeProvider } from '../index'
 import { expectAssignable, expectType } from 'tsd'
-import Fastify, { FastifyInstance, FastifyLoggerInstance, RawReplyDefaultExpression, RawRequestDefaultExpression, RawServerDefault } from 'fastify'
+import Fastify, { FastifyInstance, FastifyBaseLogger, RawReplyDefaultExpression, RawRequestDefaultExpression, RawServerDefault } from 'fastify'
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
-expectAssignable<FastifyInstance<RawServerDefault, RawRequestDefaultExpression, RawReplyDefaultExpression, FastifyLoggerInstance, TypeBoxTypeProvider>>(fastify)
+expectAssignable<FastifyInstance<RawServerDefault, RawRequestDefaultExpression, RawReplyDefaultExpression, FastifyBaseLogger, TypeBoxTypeProvider>>(fastify)
 expectAssignable<FastifyInstance>(fastify)
 
 fastify.get('/', {
