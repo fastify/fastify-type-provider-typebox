@@ -1,11 +1,17 @@
 import {
+  ContextConfigDefault,
   FastifyPluginAsync,
   FastifyPluginCallback,
   FastifyPluginOptions,
+  FastifySchema,
   FastifySchemaCompiler,
   FastifyTypeProvider,
+  RawReplyDefaultExpression,
+  RawRequestDefaultExpression,
   RawServerBase,
-  RawServerDefault
+  RawServerDefault,
+  RouteGenericInterface,
+  RouteHandlerMethod
 } from 'fastify'
 import { TypeCompiler } from '@sinclair/typebox/compiler'
 import { Static, TSchema } from '@sinclair/typebox'
@@ -62,7 +68,7 @@ export interface TypeBoxTypeProvider extends FastifyTypeProvider {
  *
  * @example
  * ```typescript
- * import { FastifyPluginCallbackTypebox } fromg "@fastify/type-provider-typebox"
+ * import { FastifyPluginCallbackTypebox } from "@fastify/type-provider-typebox"
  *
  * const plugin: FastifyPluginCallbackTypebox = (fastify, options, done) => {
  *   done()
@@ -79,7 +85,7 @@ export type FastifyPluginCallbackTypebox<
  *
  * @example
  * ```typescript
- * import { FastifyPluginAsyncTypebox } fromg "@fastify/type-provider-typebox"
+ * import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox"
  *
  * const plugin: FastifyPluginAsyncTypebox = async (fastify, options) => {
  * }
@@ -89,3 +95,26 @@ export type FastifyPluginAsyncTypebox<
   Options extends FastifyPluginOptions = Record<never, never>,
   Server extends RawServerBase = RawServerDefault
 > = FastifyPluginAsync<Options, Server, TypeBoxTypeProvider>
+
+/**
+ * Fastify RouteHandlerMethod with Typebox automatic type inference for request / reply
+ *
+ * @example
+ * ```typescript
+ * import { FastifyRouteHandlerTypebox } from "@fastify/type-provider-typebox"
+ *
+ * const getHandler: FastifyRouteHandlerTypebox<myGetSchema> = async (req, reply) => {
+ * }
+ *
+ * fastify.get('/stuff', { schema: myGetSchema }, getHandler)
+ * ```
+ */
+export type FastifyRouteHandlerTypebox<TSchema extends FastifySchema> = RouteHandlerMethod<
+  RawServerDefault,
+  RawRequestDefaultExpression<RawServerDefault>,
+  RawReplyDefaultExpression<RawServerDefault>,
+  RouteGenericInterface,
+  ContextConfigDefault,
+  TSchema,
+  TypeBoxTypeProvider
+>

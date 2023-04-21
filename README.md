@@ -54,39 +54,14 @@ fastify.get('/', {
 })
 ```
 
-## Type definition of FastifyRequest & FastifyReply + TypeProvider
+## Type definition of RouteHandlerMethod
+
+When defining a route handler function that is defined outside of a route declaration, the function type must be set in order to get proper automatic type inference for request / reply.
+
 ```ts
-import {
-  FastifyReply,
-  FastifyRequest,
-  RawRequestDefaultExpression,
-  RawServerDefault,
-  RawReplyDefaultExpression,
-  ContextConfigDefault
-} from 'fastify';
-import { RouteGenericInterface } from 'fastify/types/route';
-import { FastifySchema } from 'fastify/types/schema';
-import { Type, TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { Type, TypeBoxTypeProvider, FastifyRouteHandlerTypebox } from '@fastify/type-provider-typebox'
 
-export type FastifyRequestTypebox<TSchema extends FastifySchema> = FastifyRequest<
-  RouteGenericInterface,
-  RawServerDefault,
-  RawRequestDefaultExpression<RawServerDefault>,
-  TSchema,
-  TypeBoxTypeProvider
->;
-
-export type FastifyReplyTypebox<TSchema extends FastifySchema> = FastifyReply<
-  RawServerDefault,
-  RawRequestDefaultExpression,
-  RawReplyDefaultExpression,
-  RouteGenericInterface,
-  ContextConfigDefault,
-  TSchema,
-  TypeBoxTypeProvider
->
-
-export const CreateProductSchema = {
+export const createProductSchema = {
   body: Type.Object({
     name: Type.String(),
     price: Type.Number(),
@@ -98,9 +73,9 @@ export const CreateProductSchema = {
   },
 };
 
-export const CreateProductHandler = (
-  req: FastifyRequestTypebox<typeof CreateProductSchema>,
-  reply: FastifyReplyTypebox<typeof CreateProductSchema>
+export const createProductHandler: FastifyRouteHandlerTypebox<typeof createProductSchema> = (
+  req,
+  reply
 ) => {
   // The `name` and `price` types are automatically inferred
   const { name, price } = req.body;
@@ -110,7 +85,6 @@ export const CreateProductHandler = (
   //                       ^? error TS2322: Type 'string' is not assignable to type 'number'.
 };
 ```
-
 
 ## Plugin definition
 
