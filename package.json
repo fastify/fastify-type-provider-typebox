@@ -8,7 +8,7 @@
     "fastify": "^4.0.0"
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.27.8"
+    "@sinclair/typebox": "^0.28.5"
   },
   "scripts": {
     "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",
