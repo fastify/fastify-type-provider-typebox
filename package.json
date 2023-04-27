@@ -5,10 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "peerDependencies": {
-    "fastify": "^4.0.0"
-  },
-  "dependencies": {
-    "@sinclair/typebox": "^0.28.5"
+    "fastify": "^4.0.0",
+    "@sinclair/typebox": "^0.28.7"
   },
   "scripts": {
     "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",
@@ -41,8 +39,8 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.4",
     "eslint-plugin-promise": "^6.0.0",
-    "fastify": "^4.2.0",
-    "fastify-plugin": "^4.2.0",
+    "fastify": "^4.17.0",
+    "fastify-plugin": "^4.5.0",
     "fastify-tsconfig": "^1.0.1",
     "rimraf": "^5.0.0",
     "tap": "^16.3.0",
