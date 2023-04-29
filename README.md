@@ -5,6 +5,7 @@ A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox)
 ## Installation
 
 ```sh
+npm i @sinclair/typebox # Required as peer dependency
 npm i @fastify/type-provider-typebox
 ```
 
@@ -36,7 +37,13 @@ fastify.withTypeProvider<TypeBoxTypeProvider>()
 
 ```ts
 import Fastify from 'fastify'
-import { Type, TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+
+// This package re-export Typebox package
+// but you can also use any builders imported 
+// directly from @sinclair/typebox
+import { Type } from '@sinclair/typebox'
+
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 
