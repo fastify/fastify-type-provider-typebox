@@ -5,8 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "peerDependencies": {
-    "fastify": "^4.0.0",
-    "@sinclair/typebox": "^0.28.7"
+    "@sinclair/typebox": "^0.28.0"
   },
   "scripts": {
     "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",
