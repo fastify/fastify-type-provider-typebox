@@ -61,7 +61,7 @@ jobs:
         contents: read
       strategy:
         matrix:
-          node-version: [14, 16, 18, 19]
+          node-version: [14, 16, 18, 19, 20]
           peer-version: ${{ fromJSON(needs.variants.outputs.variants) }}
           os: [macos-latest, ubuntu-latest, windows-latest]
           exclude:
