@@ -167,3 +167,43 @@ fastify.withTypeProvider<TypeBoxTypeProvider>().get('/', {
 ```
 
 For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compiler)
+
+## TypeBox Transform Provider
+
+This provider offers experimental support for automatic Json value decoding using TypeBox Transform types. This feature enables Json encoded values to be automatically decoded and passed on to Fastify routes as values more natural to JavaScript. This feature requires TypeBox 0.31.0 or above.
+
+To use this feature, you can import the `TypeBoxTransformProvider` function from the `/transform` sub module. This function configures a Fastify instance's `validationCompiler` and `preSerialization` hook to use the TypeBox Transform infrastructure. This function will also return the Fastify instance remapped with a special decode Type Provider.
+
+```typescript
+import { TypeBoxTransformProvider } from  '@fastify-type-provider-typebox/transform'
+
+const fastify = TypeBoxTransformProvider(Fastify())
+```
+### Usage
+
+The following demonstrates using Transform types to convert between numbers and Dates. In this example, we expect the client to send a number representing a timestamp. Upon receiving a request, the Transform's Decode function will be run which maps the number into a JavaScript Date object. This Date object is then passed on to the Fastify route and observed as a type safe Date. The inverse Encode function is run when sending the response.
+
+```typescript
+import { TypeBoxTransformProvider } from  '@fastify-type-provider-typebox/transform'
+import { Type } from '@fastify-type-provider-typebox'
+import Fastify from 'fastify'
+
+const fastify = TypeBoxTransformProvider(Fastify())
+
+// Timestamp Transform
+const Timestamp = Type.Transform(Type.Number())
+  .Decode(value => new Date(value))      // number > Date
+  .Encode(value => value.getTime())      // Date > number
+
+// Route
+fastify.post('/date', {
+  schema: {
+    body: Timestamp,                      // number
+    response: { 200: Timestamp }          // number
+  }
+}, (req, res) => {
+  const { body } = req.body               // Date
+  res.send(body)                          // Date
+})
+```
+For additional information on Transform types, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#types-transform)

@@ -4,8 +4,13 @@
   "description": "A Type Provider for Typebox over Fastify",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    "./provider": "./dist/provider.js",
+    "./transform": "./dist/transform.js",
+    ".": "./dist/index.js"
+  },
   "peerDependencies": {
-    "@sinclair/typebox": ">=0.26 <=0.30"
+    "@sinclair/typebox": ">=0.31 <=0.31"
   },
   "scripts": {
     "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",

@@ -1,4 +1,8 @@
 {
   "extends": "fastify-tsconfig",
-  "exclude": ["./node_modules", "types/**/*.test-d.ts"]
+  "compilerOptions": {
+    "target": "ES2018"
+  },
+  "exclude": ["./node_modules", "types/**/*.test-d.ts"],
+  "files": ["src/index.ts", "src/transform.ts"]
 }
