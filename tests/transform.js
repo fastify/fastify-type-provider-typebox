@@ -124,3 +124,25 @@ tap.test('Transform: expect 500 on encode throw', async t => {
   const response = await fastify.inject().post('/').headers({ 'content-type': 'application/json' }).body(1337).end()
   t.equal(response.statusCode, 500)
 })
+tap.test('Transform: should decode and encode nested transform', async t => {
+  t.plan(1)
+  const InputOutput = Type.Transform(Type.Number())
+    .Decode(value => new Date(value))
+    .Encode(value => value.getTime(value)) // expect throw here
+  const ContainerType = Type.Object({
+    value: InputOutput
+  })
+  const fastify = TypeBoxTransformProvider(Fastify()).post('/', {
+    schema: {
+      body: ContainerType,
+      response: { 200: ContainerType }
+    }
+  }, (req, res) => {
+    if (!(req.body.value instanceof Date)) throw Error('Expected Date')
+    if (req.body.value.getTime() !== 1337) throw Error('Expected 1337')
+    res.status(200).send(req.body)
+  })
+  const response = await fastify.inject().post('/').headers({ 'content-type': 'application/json' }).body({ value: 1337 }).end()
+  console.log(response.json())
+  t.equal(response.json().value, 1337)
+})
