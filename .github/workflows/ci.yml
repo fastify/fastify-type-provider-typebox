@@ -63,6 +63,7 @@ jobs:
           
   variants:
       name: Read test variants
+      needs: lint
       runs-on: ubuntu-latest
       permissions:
         contents: read
