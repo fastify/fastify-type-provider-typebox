@@ -85,6 +85,7 @@ jobs:
           run: npm i fastify @sinclair/typebox@${{ matrix.peer-version }}
 
         - name: Lint code
+          if: ${{ matrix.node-version != 14 }}
           run: npm run lint
 
         - name: Run tests
