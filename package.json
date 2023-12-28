@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "peerDependencies": {
-    "@sinclair/typebox": ">=0.26 <=0.31"
+    "@sinclair/typebox": ">=0.26 <=0.32"
   },
   "scripts": {
     "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",
