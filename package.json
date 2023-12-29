@@ -2,15 +2,32 @@
   "name": "@fastify/type-provider-typebox",
   "version": "3.6.0",
   "description": "A Type Provider for Typebox over Fastify",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "module": "dist/esm/index.mjs",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/index.d.mts",
+        "default": "./dist/esm/index.mjs"
+      }
+    }
+  },
   "peerDependencies": {
     "@sinclair/typebox": ">=0.26 <=0.32"
   },
   "scripts": {
-    "build": "rimraf ./dist && mkdir dist && tsc --outDir dist",
+    "build:clean": "rimraf ./dist",
+    "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution Node10 --sourcemap false",
+    "build:esm": "tsc --outDir dist/esm --module NodeNext --moduleResolution NodeNext --sourcemap false",
+    "build:post": "node post-build.js",
+    "build": "npm run build:clean & npm run build:cjs & npm run build:esm & npm run build:post",
     "test": "npm run build && npm run typescript && tap tests/index.js --no-check-coverage",
-    "lint": "eslint . --ext .ts --ext .js",
+    "lint": "eslint . --ext .ts --ext .js --ext .mts --ext .mjs",
     "lint:fix": "npm run lint -- --fix",
     "typescript": "tsd",
     "prepublishOnly": "npm run build"
