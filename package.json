@@ -25,7 +25,8 @@
     "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution Node10 --sourcemap false",
     "build:esm": "tsc --outDir dist/esm --module NodeNext --moduleResolution NodeNext --sourcemap false",
     "build:post": "node post-build.js",
-    "build": "npm run build:clean & npm run build:cjs & npm run build:esm & npm run build:post",
+    "build:test": "attw --pack .",
+    "build": "npm run build:clean & npm run build:cjs & npm run build:esm & npm run build:post & npm run build:test",
     "test": "npm run build && npm run typescript && tap tests/index.js --no-check-coverage",
     "lint": "eslint . --ext .ts --ext .js --ext .mts --ext .mjs",
     "lint:fix": "npm run lint -- --fix",
@@ -47,6 +48,7 @@
   },
   "homepage": "https://github.com/fastify/fastify-type-provider-typebox#readme",
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.13.5",
     "@types/node": "^20.1.0",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
