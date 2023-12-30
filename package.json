@@ -26,7 +26,7 @@
     "build:esm": "tsc --outDir dist/esm --module NodeNext --moduleResolution NodeNext --sourcemap false",
     "build:post": "node post-build.js",
     "build:test": "attw --pack .",
-    "build": "npm run build:clean & npm run build:cjs & npm run build:esm & npm run build:post & npm run build:test",
+    "build": "npm run build:clean && npm run build:cjs && npm run build:esm && npm run build:post && npm run build:test",
     "test": "npm run build && npm run typescript && tap tests/index.js --no-check-coverage",
     "lint": "eslint . --ext .ts --ext .js --ext .mts --ext .mjs",
     "lint:fix": "npm run lint -- --fix",
