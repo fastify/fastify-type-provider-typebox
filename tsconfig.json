@@ -5,5 +5,5 @@
     "sourceMap": true,
     "declaration": true
   },
-  "exclude": ["./node_modules", "types/**/*.test-d.ts"]
+  "exclude": ["./node_modules", "types/**/*.test-d.mts"]
 }

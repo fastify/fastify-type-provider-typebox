@@ -2,7 +2,7 @@
 
 const tap = require('tap')
 const Fastify = require('fastify')
-const { Type, TypeBoxValidatorCompiler } = require('../dist/index')
+const { Type, TypeBoxValidatorCompiler } = require('../dist/cjs/index')
 
 // This test ensures AJV ignores the TypeBox [Kind] symbol property in strict
 tap.test('should compile typebox schema without configuration', async t => {
