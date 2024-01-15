@@ -47,7 +47,7 @@ import { Type } from '@sinclair/typebox'
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
 
-fastify.get('/', {
+fastify.post('/', {
   schema: {
     body: Type.Object({
       x: Type.String(),
