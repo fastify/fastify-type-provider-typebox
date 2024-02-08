@@ -27,12 +27,7 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
     // Note: Only support value conversion for querystring, params and header schematics
     const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
     if (typeCheck.Check(converted)) {
-      try {
-        // Decode added in TypeBox 0.30
-        const decoded = ('Decode' in Value) ? Value.Decode(schema, converted) : converted
-        return { value: decoded }
-      } catch (error) {
-      }
+      return { value: Value.Decode(schema, converted) }
     }
     const errors = [...typeCheck.Errors(converted)]
     return {
