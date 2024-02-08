@@ -8,7 +8,7 @@ import {
   RawServerDefault
 } from 'fastify'
 import { TypeCompiler } from '@sinclair/typebox/compiler'
-import { Static, TSchema } from '@sinclair/typebox'
+import { StaticDecode, TSchema } from '@sinclair/typebox'
 import { Value } from '@sinclair/typebox/value'
 export * from '@sinclair/typebox'
 /**
@@ -27,7 +27,12 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
     // Note: Only support value conversion for querystring, params and header schematics
     const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
     if (typeCheck.Check(converted)) {
-      return { value: converted }
+      try {
+        // Decode added in TypeBox 0.30
+        const decoded = ('Decode' in Value) ? Value.Decode(schema, converted) : converted
+        return { value: decoded }
+      } catch (error) {
+      }
     }
     const errors = [...typeCheck.Errors(converted)]
     return {
@@ -54,7 +59,7 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
  * ```
  */
 export interface TypeBoxTypeProvider extends FastifyTypeProvider {
-  output: this['input'] extends TSchema ? Static<this['input']> : unknown
+  output: this['input'] extends TSchema ? StaticDecode<this['input']> : unknown
 }
 
 /**

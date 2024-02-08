@@ -104,6 +104,28 @@ tap.test('should convert numeric strings into numbers if conversion is possible'
   t.equal(response.b, 2)
 })
 
+tap.test('should decode transform types', async t => {
+  t.plan(1)
+  const TransformType = Type.Transform(Type.Number())
+    .Decode((value) => ({ value: value * 2 }))
+    .Encode(({ value }) => value)
+
+  const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).post('/', {
+    schema: {
+      body: Type.Object({
+        a: TransformType
+      })
+    }
+  }, (req, res) => {
+    const response = req.body.a.value
+    return res.send(response)
+  })
+
+  const body = { a: 123 }
+  const response = await fastify.inject().post('/').body(body).then(res => res.json())
+  t.equal(response, 246)
+})
+
 tap.test('should return validation error message as body value conversion is not supported', async t => {
   t.plan(1)
   const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).post('/', {
