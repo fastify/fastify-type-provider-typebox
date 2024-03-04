@@ -49,7 +49,7 @@
   },
   "homepage": "https://github.com/fastify/fastify-type-provider-typebox#readme",
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.13.5",
+    "@arethetypeswrong/cli": "^0.15.0",
     "@types/node": "^20.1.0",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
     "@typescript-eslint/parser": "^5.32.0",
