@@ -50,6 +50,7 @@
   "homepage": "https://github.com/fastify/fastify-type-provider-typebox#readme",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
+    "@fastify/pre-commit": "^2.1.0",
     "@tapjs/tsx": "^1.1.21",
     "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "^7.6.0",
