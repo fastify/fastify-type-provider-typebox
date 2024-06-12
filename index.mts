@@ -54,7 +54,8 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
  * ```
  */
 export interface TypeBoxTypeProvider extends FastifyTypeProvider {
-  output: this['input'] extends TSchema ? Static<this['input']> : unknown
+  validator: this['schema'] extends TSchema ? Static<this['schema']> : unknown
+  serializer: this['schema'] extends TSchema ? Static<this['schema']> : unknown
 }
 
 /**
