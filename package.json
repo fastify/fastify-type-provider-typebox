@@ -69,5 +69,6 @@
   },
   "tsd": {
     "directory": "types"
-  }
+  },
+  "tap": "./.taprc.yaml"
 }
