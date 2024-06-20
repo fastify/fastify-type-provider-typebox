@@ -1,0 +1,6 @@
+disable-coverage: true
+files:
+  - test/**/*.js
+plugin:
+  - "@tapjs/tsx"
+  - "!@tapjs/typescript"
