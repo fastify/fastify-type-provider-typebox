@@ -1,6 +1,6 @@
 {
   "name": "@fastify/type-provider-typebox",
-  "version": "4.0.0",
+  "version": "5.0.0-pre.fv5.1",
   "description": "A Type Provider for Typebox over Fastify",
   "module": "dist/esm/index.mjs",
   "main": "dist/cjs/index.js",
