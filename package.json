@@ -49,7 +49,7 @@
     "@arethetypeswrong/cli": "^0.15.3",
     "@fastify/pre-commit": "^2.1.0",
     "@sinclair/typebox": "^0.32.32",
-    "@tapjs/tsx": "^1.1.32",
+    "@tapjs/tsx": "^2.0.3",
     "@types/node": "^20.14.2",
     "@typescript-eslint/eslint-plugin": "^7.13.0",
     "@typescript-eslint/parser": "^7.13.0",
