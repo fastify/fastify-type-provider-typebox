@@ -80,7 +80,7 @@ export type FastifyPluginCallbackTypebox<
  *
  * @example
  * ```typescript
- * import { FastifyPluginAsyncTypebox } fromg "@fastify/type-provider-typebox"
+ * import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox"
  *
  * const plugin: FastifyPluginAsyncTypebox = async (fastify, options) => {
  * }
