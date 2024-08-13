@@ -67,6 +67,10 @@ jobs:
           exclude:
             - os: windows-latest
               node-version: 14
+            - os: macos-latest
+              node-version: 14
+            - os: macos-latest
+              node-version: 16
       steps:
         - name: Check out repo
           uses: actions/checkout@v4
