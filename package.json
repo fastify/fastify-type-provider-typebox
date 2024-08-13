@@ -17,6 +17,9 @@
       }
     }
   },
+  "peerDependencies": {
+    "@sinclair/typebox": ">=0.26 <=0.32"
+  },
   "scripts": {
     "build:clean": "rimraf ./dist",
     "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution Node10 --sourcemap false",
@@ -48,7 +51,6 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
     "@fastify/pre-commit": "^2.1.0",
-    "@sinclair/typebox": "^0.32.32",
     "@tapjs/tsx": "^1.1.32",
     "@types/node": "^20.14.2",
     "@typescript-eslint/eslint-plugin": "^7.13.0",
