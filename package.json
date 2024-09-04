@@ -1,6 +1,6 @@
 {
   "name": "@fastify/type-provider-typebox",
-  "version": "5.0.0-pre.fv5.2",
+  "version": "5.0.0",
   "description": "A Type Provider for Typebox over Fastify",
   "module": "dist/esm/index.mjs",
   "main": "dist/cjs/index.js",
@@ -60,8 +60,8 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.2.0",
-    "fastify": "^5.0.0-alpha.3",
-    "fastify-plugin": "^4.5.1",
+    "fastify": "^5.0.0-alpha.4",
+    "fastify-plugin": "^5.0.0",
     "fastify-tsconfig": "^2.0.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^5.0.7",
