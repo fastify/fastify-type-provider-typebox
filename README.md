@@ -63,35 +63,46 @@ fastify.post('/', {
 
 ## Type definition of FastifyRequest & FastifyReply + TypeProvider
 ```ts
-import {
+import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { Type } from '@fastify/type-provider-typebox';
+import type {
+  ContextConfigDefault,
+  FastifyBaseLogger,
+  FastifyInstance,
   FastifyReply,
   FastifyRequest,
+  RawReplyDefaultExpression,
   RawRequestDefaultExpression,
   RawServerDefault,
-  RawReplyDefaultExpression,
-  ContextConfigDefault
 } from 'fastify';
-import { RouteGenericInterface } from 'fastify/types/route';
-import { FastifySchema } from 'fastify/types/schema';
-import { Type, TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import type { RouteGenericInterface } from 'fastify/types/route';
+import type { FastifySchema } from 'fastify/types/schema';
 
-export type FastifyRequestTypebox<TSchema extends FastifySchema> = FastifyRequest<
+export type FastifyTypeBox = FastifyInstance<
+  RawServerDefault,
+  RawRequestDefaultExpression,
+  RawReplyDefaultExpression,
+  FastifyBaseLogger,
+  TypeBoxTypeProvider
+>;
+
+export type FastifyRequestTypeBox<TSchema extends FastifySchema> = FastifyRequest<
   RouteGenericInterface,
   RawServerDefault,
-  RawRequestDefaultExpression<RawServerDefault>,
+  RawRequestDefaultExpression,
   TSchema,
   TypeBoxTypeProvider
 >;
 
-export type FastifyReplyTypebox<TSchema extends FastifySchema> = FastifyReply<
+export type FastifyReplyTypeBox<TSchema extends FastifySchema> = FastifyReply<
+  RouteGenericInterface,
   RawServerDefault,
   RawRequestDefaultExpression,
   RawReplyDefaultExpression,
-  RouteGenericInterface,
   ContextConfigDefault,
   TSchema,
   TypeBoxTypeProvider
->
+>;
 
 export const CreateProductSchema = {
   body: Type.Object({
@@ -106,8 +117,8 @@ export const CreateProductSchema = {
 };
 
 export const CreateProductHandler = (
-  req: FastifyRequestTypebox<typeof CreateProductSchema>,
-  reply: FastifyReplyTypebox<typeof CreateProductSchema>
+  req: FastifyRequestTypeBox<typeof CreateProductSchema>,
+  reply: FastifyReplyTypeBox<typeof CreateProductSchema>,
 ) => {
   // The `name` and `price` types are automatically inferred
   const { name, price } = req.body;
