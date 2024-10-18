@@ -67,7 +67,7 @@
     "rimraf": "^5.0.7",
     "tap": "^19.2.5",
     "tsd": "^0.31.0",
-    "typescript": "^5.4.5"
+    "typescript": "~5.5.4"
   },
   "tsd": {
     "directory": "types"
