@@ -53,7 +53,7 @@
     "@fastify/pre-commit": "^2.1.0",
     "@tapjs/tsx": "^3.0.0",
     "@types/node": "^22.7.6",
-    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
     "@typescript-eslint/parser": "^7.13.0",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.1.0",
