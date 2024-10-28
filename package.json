@@ -19,7 +19,7 @@
   },
   "peerDependencies": {
     "@sinclair/typebox": ">=0.26 <=0.33",
-    "fastify": "^5.0.0-alpha.3"
+    "fastify": "^5.0.0"
   },
   "scripts": {
     "build:clean": "rimraf ./dist",
