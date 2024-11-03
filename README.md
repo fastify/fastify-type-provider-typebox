@@ -40,7 +40,7 @@ import Fastify from 'fastify'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
 // This package re-export Typebox package
-// but you can also use any builders imported 
+// but you can also use any builders imported
 // directly from @sinclair/typebox
 import { Type } from '@sinclair/typebox'
 
