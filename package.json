@@ -49,7 +49,7 @@
   },
   "homepage": "https://github.com/fastify/fastify-type-provider-typebox#readme",
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.16.4",
+    "@arethetypeswrong/cli": "^0.17.0",
     "@fastify/pre-commit": "^2.1.0",
     "@tapjs/tsx": "^3.0.0",
     "@types/node": "^22.7.6",
