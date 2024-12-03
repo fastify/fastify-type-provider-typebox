@@ -13,6 +13,18 @@ npm i @sinclair/typebox # Required as peer dependency
 npm i @fastify/type-provider-typebox
 ```
 
+### Compatibility
+
+| Plugin version | Fastify version |
+| ---------------|-----------------|
+| `^5.x`         | `^5.x`          |
+| `^1.x`         | `^4.x`          |
+
+
+Please note that if a Fastify version is out of support, then so are the corresponding version(s) of this plugin
+in the table above.
+See [Fastify's LTS policy](https://github.com/fastify/fastify/blob/main/docs/Reference/LTS.md) for more details.
+
 ## Overview
 
 This package provides enhanced support for TypeBox by integrating it with the Fastify [Type Provider](https://fastify.dev/docs/latest/Reference/Type-Providers/) infrastructure. It provides a re-export of the TypeBox `Type.*` builder for convenience as well as providing additional utility types and optional validation infrastructure that can be useful when leveraging TypeBox with Fastify.
@@ -170,4 +182,8 @@ fastify.withTypeProvider<TypeBoxTypeProvider>().get('/', {
 })
 ```
 
-For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compiler)
+For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compiler).
+
+## License
+
+Licensed under [MIT](./LICENSE).
