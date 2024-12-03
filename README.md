@@ -1,4 +1,8 @@
-# fastify-type-provider-typebox
+# @fastify/type-provider-typebox
+
+![CI](https://github.com/fastify/type-provider-typebox/workflows/CI/badge.svg)
+[![NPM version](https://img.shields.io/npm/v/@fastify/type-provider-typebox)](https://www.npmjs.com/package/@fastify/type-provider-typebox)
+[![neostandard javascript style](https://img.shields.io/badge/code_style-neostandard-brightgreen?style=flat)](https://github.com/neostandard/neostandard)
 
 A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox)
 
