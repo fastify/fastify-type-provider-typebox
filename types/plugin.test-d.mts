@@ -66,10 +66,10 @@ const callbackPlugin: FastifyPluginCallbackTypebox<{ optionA: string }, Http2Ser
 
 const fastify = Fastify()
 
-fastify.register(asyncPlugin)
-fastify.register(callbackPlugin)
+fastify.register(asyncPlugin, {optionA: 'a'})
+fastify.register(callbackPlugin, {optionA: 'a'})
 
-const asyncPluginHttpDefault: FastifyPluginAsyncTypebox<{ optionA: string }> = async (fastify, options) => {
+const asyncPluginHttpDefault: FastifyPluginAsyncTypebox<{ optionA: string }> = async () => {
 }
 
 fp(asyncPlugin)
