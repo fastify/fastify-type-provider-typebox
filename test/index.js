@@ -145,7 +145,7 @@ tap.test('should fast serialize for the typebox 0.26.0 allOf intersect represent
         ])
       }
     }
-  }, (req, res) => res.send({ a: 1, b: 2 }))
+  }, (_req, res) => res.send({ a: 1, b: 2 }))
   const response = await fastify.inject().get('/').then(res => res.json())
   t.equal(response.a, 1)
   t.equal(response.b, 2)
