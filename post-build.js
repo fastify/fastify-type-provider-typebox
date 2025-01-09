@@ -12,6 +12,6 @@
 //
 // ------------------------------------------------------------------
 
-const fs = require('fs')
+const fs = require('node:fs')
 fs.renameSync('dist/cjs/index.d.mts', 'dist/cjs/index.d.ts')
 fs.renameSync('dist/cjs/index.mjs', 'dist/cjs/index.js')
