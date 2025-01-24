@@ -97,5 +97,11 @@
   "tsd": {
     "directory": "types"
   },
-  "tap": "./.taprc.yaml"
+  "tap": {
+    "extends": "./.taprc.yaml",
+    "plugin": [
+      "@tapjs/tsx",
+      "!@tapjs/typescript"
+    ]
+  }
 }
