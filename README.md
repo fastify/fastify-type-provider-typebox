@@ -17,8 +17,8 @@ npm i @fastify/type-provider-typebox
 
 | Plugin version | Fastify version |
 | ---------------|-----------------|
-| `^5.x`         | `^5.x`          |
-| `^1.x`         | `^4.x`          |
+| `>=5.x`        | `^5.x`          |
+| `>=1.x <5.x`   | `^4.x`          |
 
 
 Please note that if a Fastify version is out of support, then so are the corresponding versions of this plugin
