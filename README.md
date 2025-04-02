@@ -1,6 +1,10 @@
-# fastify-type-provider-typebox
+# @fastify/type-provider-typebox
 
-A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox)
+[![CI](https://github.com/fastify/fastify-type-provider-typebox/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fastify/fastify-type-provider-typebox/actions/workflows/ci.yml)
+[![NPM version](https://img.shields.io/npm/v/@fastify/type-provider-typebox)](https://www.npmjs.com/package/@fastify/type-provider-typebox)
+[![neostandard javascript style](https://img.shields.io/badge/code_style-neostandard-brightgreen?style=flat)](https://github.com/neostandard/neostandard)
+
+A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox).
 
 ## Installation
 
@@ -8,6 +12,18 @@ A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox)
 npm i @sinclair/typebox # Required as peer dependency
 npm i @fastify/type-provider-typebox
 ```
+
+### Compatibility
+
+| Plugin version | Fastify version |
+| ---------------|-----------------|
+| `>=5.x`        | `^5.x`          |
+| `>=1.x <5.x`   | `^4.x`          |
+
+
+Please note that if a Fastify version is out of support, then so are the corresponding versions of this plugin
+in the table above.
+See [Fastify's LTS policy](https://github.com/fastify/fastify/blob/main/docs/Reference/LTS.md) for more details.
 
 ## Overview
 
@@ -40,7 +56,7 @@ import Fastify from 'fastify'
 import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
 // This package re-export Typebox package
-// but you can also use any builders imported 
+// but you can also use any builders imported
 // directly from @sinclair/typebox
 import { Type } from '@sinclair/typebox'
 
@@ -63,35 +79,46 @@ fastify.post('/', {
 
 ## Type definition of FastifyRequest & FastifyReply + TypeProvider
 ```ts
-import {
+import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import { Type } from '@fastify/type-provider-typebox';
+import type {
+  ContextConfigDefault,
+  FastifyBaseLogger,
+  FastifyInstance,
   FastifyReply,
   FastifyRequest,
+  RawReplyDefaultExpression,
   RawRequestDefaultExpression,
   RawServerDefault,
-  RawReplyDefaultExpression,
-  ContextConfigDefault
 } from 'fastify';
-import { RouteGenericInterface } from 'fastify/types/route';
-import { FastifySchema } from 'fastify/types/schema';
-import { Type, TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
+import type { RouteGenericInterface } from 'fastify/types/route';
+import type { FastifySchema } from 'fastify/types/schema';
 
-export type FastifyRequestTypebox<TSchema extends FastifySchema> = FastifyRequest<
+export type FastifyTypeBox = FastifyInstance<
+  RawServerDefault,
+  RawRequestDefaultExpression,
+  RawReplyDefaultExpression,
+  FastifyBaseLogger,
+  TypeBoxTypeProvider
+>;
+
+export type FastifyRequestTypeBox<TSchema extends FastifySchema> = FastifyRequest<
   RouteGenericInterface,
   RawServerDefault,
-  RawRequestDefaultExpression<RawServerDefault>,
+  RawRequestDefaultExpression,
   TSchema,
   TypeBoxTypeProvider
 >;
 
-export type FastifyReplyTypebox<TSchema extends FastifySchema> = FastifyReply<
+export type FastifyReplyTypeBox<TSchema extends FastifySchema> = FastifyReply<
+  RouteGenericInterface,
   RawServerDefault,
   RawRequestDefaultExpression,
   RawReplyDefaultExpression,
-  RouteGenericInterface,
   ContextConfigDefault,
   TSchema,
   TypeBoxTypeProvider
->
+>;
 
 export const CreateProductSchema = {
   body: Type.Object({
@@ -106,8 +133,8 @@ export const CreateProductSchema = {
 };
 
 export const CreateProductHandler = (
-  req: FastifyRequestTypebox<typeof CreateProductSchema>,
-  reply: FastifyReplyTypebox<typeof CreateProductSchema>
+  req: FastifyRequestTypeBox<typeof CreateProductSchema>,
+  reply: FastifyReplyTypeBox<typeof CreateProductSchema>,
 ) => {
   // The `name` and `price` types are automatically inferred
   const { name, price } = req.body;
@@ -166,4 +193,8 @@ fastify.withTypeProvider<TypeBoxTypeProvider>().get('/', {
 })
 ```
 
-For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compiler)
+For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compiler).
+
+## License
+
+Licensed under [MIT](./LICENSE).

@@ -1,12 +1,11 @@
 'use strict'
 
-const tap = require('tap')
+const { test } = require('node:test')
+const assert = require('node:assert')
 const Fastify = require('fastify')
 const { Type, TypeBoxValidatorCompiler } = require('../dist/cjs/index')
 
-// This test ensures AJV ignores the TypeBox [Kind] symbol property in strict
-tap.test('should compile typebox schema without configuration', async t => {
-  t.plan(1)
+test('should compile typebox schema without configuration', async () => {
   const fastify = Fastify().get('/', {
     schema: {
       querystring: Type.Object({
@@ -17,12 +16,10 @@ tap.test('should compile typebox schema without configuration', async t => {
     }
   }, (_req, _res) => { })
   await fastify.ready()
-  t.pass()
+  assert.ok(true)
 })
 
-// This test ensures AJV internally throws for unknown schema properties in strict
-tap.test('should not compile schema with unknown keywords', async t => {
-  t.plan(1)
+test('should not compile schema with unknown keywords', async () => {
   const fastify = Fastify().get('/', {
     schema: {
       querystring: Type.Object({
@@ -32,16 +29,11 @@ tap.test('should not compile schema with unknown keywords', async t => {
       }, { kind: 'Object' }) // unknown keyword
     }
   }, (_req, _res) => { })
-  try {
-    await fastify.ready() // expect throw
-    t.fail()
-  } catch {
-    t.pass()
-  }
+
+  await assert.rejects(fastify.ready())
 })
 
-tap.test('should validate querystring parameters', async t => {
-  t.plan(1)
+test('should validate querystring parameters', async () => {
   const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).get('/', {
     schema: {
       querystring: Type.Object({
@@ -51,16 +43,18 @@ tap.test('should validate querystring parameters', async t => {
       })
     }
   }, (req, res) => res.send(req.query))
-  const { a, b, c } = await fastify.inject().get('/').query({ a: '1', b: '2', c: '3' }).then(res => res.json())
-  if (a === '1' && b === '2' && c === '3') {
-    t.pass()
-  } else {
-    t.fail()
-  }
+
+  const { a, b, c } = await fastify.inject()
+    .get('/')
+    .query({ a: '1', b: '2', c: '3' })
+    .then(res => res.json())
+
+  assert.strictEqual(a, '1')
+  assert.strictEqual(b, '2')
+  assert.strictEqual(c, '3')
 })
 
-tap.test('should not validate querystring parameters', async t => {
-  t.plan(1)
+test('should not validate querystring parameters', async () => {
   const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).get('/', {
     schema: {
       querystring: Type.Object({
@@ -70,12 +64,16 @@ tap.test('should not validate querystring parameters', async t => {
       })
     }
   }, (req, res) => res.send(req.query))
-  const statusCode = await fastify.inject().get('/').query({ a: '1', b: '2' }).then(res => res.statusCode)
-  t.equal(statusCode, 400)
+
+  const statusCode = await fastify.inject()
+    .get('/')
+    .query({ a: '1', b: '2' })
+    .then(res => res.statusCode)
+
+  assert.strictEqual(statusCode, 400)
 })
 
-tap.test('should return validation error message on response', async t => {
-  t.plan(1)
+test('should return validation error message on response', async () => {
   const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).get('/', {
     schema: {
       querystring: Type.Object({
@@ -85,12 +83,16 @@ tap.test('should return validation error message on response', async t => {
       })
     }
   }, (req, res) => res.send(req.query))
-  const response = await fastify.inject().get('/').query({ a: '1', b: '2' }).then(res => res.json())
-  t.equal(response.message.indexOf('querystring/c'), 0)
+
+  const response = await fastify.inject()
+    .get('/')
+    .query({ a: '1', b: '2' })
+    .then(res => res.json())
+
+  assert.ok(response.message.startsWith('querystring/c'))
 })
 
-tap.test('should convert numeric strings into numbers if conversion is possible', async t => {
-  t.plan(2)
+test('should convert numeric strings into numbers if conversion is possible', async () => {
   const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).get('/', {
     schema: {
       querystring: Type.Object({
@@ -99,13 +101,17 @@ tap.test('should convert numeric strings into numbers if conversion is possible'
       })
     }
   }, (req, res) => res.send(req.query))
-  const response = await fastify.inject().get('/').query({ a: '1', b: '2' }).then(res => res.json())
-  t.equal(response.a, 1)
-  t.equal(response.b, 2)
+
+  const response = await fastify.inject()
+    .get('/')
+    .query({ a: '1', b: '2' })
+    .then(res => res.json())
+
+  assert.strictEqual(response.a, 1)
+  assert.strictEqual(response.b, 2)
 })
 
-tap.test('should return validation error message as body value conversion is not supported', async t => {
-  t.plan(1)
+test('should return validation error message as body value conversion is not supported', async () => {
   const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).post('/', {
     schema: {
       body: Type.Object({
@@ -114,14 +120,20 @@ tap.test('should return validation error message as body value conversion is not
       })
     }
   }, (req, res) => res.send(req.query))
+
   const headers = { 'content-type': 'application/json' }
-  const body = { a: '1', b: 2 } // note: value conversion not support for body schematics
-  const response = await fastify.inject().post('/').headers(headers).body(body).then(res => res.json())
-  t.equal(response.message.indexOf('body/a'), 0)
+  const body = { a: '1', b: 2 }
+
+  const response = await fastify.inject()
+    .post('/')
+    .headers(headers)
+    .body(body)
+    .then(res => res.json())
+
+  assert.ok(response.message.startsWith('body/a'))
 })
 
-tap.test('should return validation error message if no conversion is possible', async t => {
-  t.plan(1)
+test('should return validation error message if no conversion is possible', async () => {
   const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).get('/', {
     schema: {
       querystring: Type.Object({
@@ -130,12 +142,16 @@ tap.test('should return validation error message if no conversion is possible', 
       })
     }
   }, (req, res) => res.send(req.query))
-  const response = await fastify.inject().get('/').query({ a: 'hello', b: '2' }).then(res => res.json())
-  t.equal(response.message.indexOf('querystring/a'), 0)
+
+  const response = await fastify.inject()
+    .get('/')
+    .query({ a: 'hello', b: '2' })
+    .then(res => res.json())
+
+  assert.ok(response.message.startsWith('querystring/a'))
 })
 
-tap.test('should fast serialize for the typebox 0.26.0 allOf intersect representation', async t => {
-  t.plan(2)
+test('should fast serialize for the typebox 0.26.0 allOf intersect representation', async () => {
   const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).get('/', {
     schema: {
       response: {
@@ -145,8 +161,12 @@ tap.test('should fast serialize for the typebox 0.26.0 allOf intersect represent
         ])
       }
     }
-  }, (req, res) => res.send({ a: 1, b: 2 }))
-  const response = await fastify.inject().get('/').then(res => res.json())
-  t.equal(response.a, 1)
-  t.equal(response.b, 2)
+  }, (_req, res) => res.send({ a: 1, b: 2 }))
+
+  const response = await fastify.inject()
+    .get('/')
+    .then(res => res.json())
+
+  assert.strictEqual(response.a, 1)
+  assert.strictEqual(response.b, 2)
 })

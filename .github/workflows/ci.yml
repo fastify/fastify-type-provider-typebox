@@ -4,7 +4,6 @@ on:
   push:
     branches:
      - main
-     - master
      - next
      - 'v*'
     paths-ignore:
@@ -20,6 +19,9 @@ concurrency:
   group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   dependency-review:
       name: Dependency Review
@@ -34,7 +36,7 @@ jobs:
               persist-credentials: false
 
           - name: Dependency review
-            uses: actions/dependency-review-action@v3
+            uses: actions/dependency-review-action@v4
 
   variants:
       name: Read test variants
@@ -80,6 +82,7 @@ jobs:
         - name: Setup Node ${{ matrix.node-version }}
           uses: actions/setup-node@v4
           with:
+            check-latest: true
             node-version: ${{ matrix.node-version }}
 
         - name: Install dependencies

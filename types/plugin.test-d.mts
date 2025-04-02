@@ -2,7 +2,7 @@ import { Type, FastifyPluginAsyncTypebox, FastifyPluginCallbackTypebox } from '.
 import { expectType } from 'tsd'
 import Fastify, { FastifyPluginAsync, FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
-import { Http2Server } from 'http2'
+import { Http2Server } from 'node:http2'
 
 // Ensure the defaults of FastifyPluginAsyncTypebox are the same as FastifyPluginAsync
 export const pluginAsyncDefaults: FastifyPluginAsync = async (fastify, options) => {
@@ -66,10 +66,10 @@ const callbackPlugin: FastifyPluginCallbackTypebox<{ optionA: string }, Http2Ser
 
 const fastify = Fastify()
 
-fastify.register(asyncPlugin)
-fastify.register(callbackPlugin)
+fastify.register(asyncPlugin, {optionA: 'a'})
+fastify.register(callbackPlugin, {optionA: 'a'})
 
-const asyncPluginHttpDefault: FastifyPluginAsyncTypebox<{ optionA: string }> = async (fastify, options) => {
+const asyncPluginHttpDefault: FastifyPluginAsyncTypebox<{ optionA: string }> = async () => {
 }
 
 fp(asyncPlugin)
