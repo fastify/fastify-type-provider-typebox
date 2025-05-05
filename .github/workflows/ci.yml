@@ -89,7 +89,7 @@ jobs:
           run: npm i --ignore-scripts
 
         - name: Install peerdeps
-          run: npm i fastify @sinclair/typebox@${{ matrix.peer-version }}
+          run: npm i --ignore-scripts fastify @sinclair/typebox@${{ matrix.peer-version }}
 
         - name: Lint code
           if: ${{ matrix.node-version != 14 }}
