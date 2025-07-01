@@ -29,16 +29,19 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
     if (typeCheck.Check(converted)) {
       return { value: converted }
     }
-    const errors = [...typeCheck.Errors(converted)]
+    const errors = []
+    for (const error of typeCheck.Errors(converted)) {
+      errors.push({
+        message: error.message,
+        instancePath: error.path
+      })
+    }
     return {
       // Note: Here we return a FastifySchemaValidationError[] result. As of writing, Fastify
       // does not currently export this type. Future revisions should uncomment the assertion
       // below and return the full set of properties. The specified properties 'message' and
       // 'instancePath' do however result in a near equivalent error messages to Ajv.
-      error: errors.map((error) => ({
-        message: `${error.message}`,
-        instancePath: error.path
-      })) // as FastifySchemaValidationError[]
+      error: errors // as FastifySchemaValidationError[]
     }
   }
 }
