@@ -31,7 +31,7 @@ jobs:
         contents: read
       steps:
           - name: Check out repo
-            uses: actions/checkout@v4
+            uses: actions/checkout@v5
             with:
               persist-credentials: false
 
@@ -47,7 +47,7 @@ jobs:
         variants: ${{ steps.read-variants.outputs.variants }}
       steps:
         - name: Check out repo
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
           with:
             persist-credentials: false
         - name: Read variants
@@ -75,7 +75,7 @@ jobs:
               node-version: 16
       steps:
         - name: Check out repo
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
           with:
             persist-credentials: false
 
