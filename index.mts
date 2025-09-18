@@ -7,10 +7,10 @@ import {
   RawServerBase,
   RawServerDefault
 } from 'fastify'
-import { TypeCompiler } from '@sinclair/typebox/compiler'
-import { Static, TSchema } from '@sinclair/typebox'
-import { Value } from '@sinclair/typebox/value'
-export * from '@sinclair/typebox'
+import { Compile } from 'typebox/compile'
+import { type Static, type TSchema } from 'typebox'
+import { Value } from 'typebox/value'
+export * from 'typebox'
 /**
  * Enables TypeBox schema validation
  *
@@ -22,7 +22,7 @@ export * from '@sinclair/typebox'
  * ```
  */
 export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema, httpPart }) => {
-  const typeCheck = TypeCompiler.Compile(schema)
+  const typeCheck = Compile(schema)
   return (value): any => {
     // Note: Only support value conversion for querystring, params and header schematics
     const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
@@ -33,7 +33,7 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
     for (const error of typeCheck.Errors(converted)) {
       errors.push({
         message: error.message,
-        instancePath: error.path
+        instancePath: error.instancePath
       })
     }
     return {
