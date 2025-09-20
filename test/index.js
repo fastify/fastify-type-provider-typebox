@@ -89,7 +89,7 @@ test('should return validation error message on response', async () => {
     .query({ a: '1', b: '2' })
     .then(res => res.json())
 
-  assert.ok(response.message.startsWith('querystring/c'))
+  assert.ok(response.message.includes('must have required properties c'))
 })
 
 test('should convert numeric strings into numbers if conversion is possible', async () => {

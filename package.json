@@ -18,7 +18,7 @@
     }
   },
   "peerDependencies": {
-    "@sinclair/typebox": ">=0.26 <=0.34"
+    "typebox": "^1.0.13"
   },
   "scripts": {
     "build:clean": "rimraf ./dist",
