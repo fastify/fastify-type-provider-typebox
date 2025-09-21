@@ -9,7 +9,7 @@ A Type Provider for [Typebox](https://github.com/sinclairzx81/typebox).
 ## Installation
 
 ```sh
-npm i @sinclair/typebox # Required as peer dependency
+npm i typebox # Required as peer dependency
 npm i @fastify/type-provider-typebox
 ```
 
@@ -57,8 +57,8 @@ import { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 
 // This package re-export Typebox package
 // but you can also use any builders imported
-// directly from @sinclair/typebox
-import { Type } from '@sinclair/typebox'
+// directly from typebox
+import { Type } from 'typebox'
 
 
 const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
@@ -193,7 +193,7 @@ fastify.withTypeProvider<TypeBoxTypeProvider>().get('/', {
 })
 ```
 
-For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compiler).
+For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compile).
 
 ## License
 
