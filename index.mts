@@ -3,6 +3,7 @@ import {
   FastifyPluginCallback,
   FastifyPluginOptions,
   FastifySchemaCompiler,
+  FastifySchemaValidationError,
   FastifyTypeProvider,
   RawServerBase,
   RawServerDefault
@@ -23,25 +24,15 @@ export * from 'typebox'
  */
 export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema, httpPart }) => {
   const typeCheck = Compile(schema)
-  return (value): any => {
+  return (value): any /* TODO: remove any for next major */ => {
     // Note: Only support value conversion for querystring, params and header schematics
     const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
     if (typeCheck.Check(converted)) {
       return { value: converted }
     }
-    const errors = []
-    for (const error of typeCheck.Errors(converted)) {
-      errors.push({
-        message: error.message,
-        instancePath: error.instancePath
-      })
-    }
+    const errors: FastifySchemaValidationError[] = typeCheck.Errors(converted);
     return {
-      // Note: Here we return a FastifySchemaValidationError[] result. As of writing, Fastify
-      // does not currently export this type. Future revisions should uncomment the assertion
-      // below and return the full set of properties. The specified properties 'message' and
-      // 'instancePath' do however result in a near equivalent error messages to Ajv.
-      error: errors // as FastifySchemaValidationError[]
+      error: errors
     }
   }
 }
