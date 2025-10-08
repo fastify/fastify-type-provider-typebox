@@ -12,6 +12,7 @@ import { Compile } from 'typebox/compile'
 import { type Static, type TSchema } from 'typebox'
 import { Value } from 'typebox/value'
 export * from 'typebox'
+export { default as Format } from 'typebox/format'
 /**
  * Enables TypeBox schema validation
  *
