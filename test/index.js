@@ -3,7 +3,7 @@
 const { test } = require('node:test')
 const assert = require('node:assert')
 const Fastify = require('fastify')
-const { Type, TypeBoxValidatorCompiler } = require('../dist/cjs/index')
+const { Format, Type, TypeBoxValidatorCompiler } = require('../dist/cjs/index')
 
 test('should compile typebox schema without configuration', async () => {
   const fastify = Fastify().get('/', {
@@ -169,4 +169,32 @@ test('should fast serialize for the typebox 0.26.0 allOf intersect representatio
 
   assert.strictEqual(response.a, 1)
   assert.strictEqual(response.b, 2)
+})
+
+test('should validate body with a custom format', async () => {
+  const formatName = 'custom-format'
+  const formatRegex = /^\d{3}[a-z]{3}$/
+  Format.Set(formatName, (value) => formatRegex.test(value))
+  const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).post('/', {
+    schema: {
+      body: Type.Object({
+        prop: Type.String({
+          format: formatName
+        })
+      })
+    }
+  }, (req, res) => res.send(req.body))
+
+  const validValue = '123abc'
+  const { prop } = await fastify.inject()
+    .post('/')
+    .body({ prop: validValue })
+    .then(res => res.json())
+  assert.strictEqual(prop, validValue)
+
+  const response = await fastify.inject()
+    .post('/')
+    .body({ prop: 'invalid' })
+    .then(res => res.json())
+  assert.ok(response.message.includes(`must match format "${formatName}"`))
 })

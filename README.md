@@ -195,6 +195,19 @@ fastify.withTypeProvider<TypeBoxTypeProvider>().get('/', {
 
 For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compile).
 
+## Register formats
+
+The Format module of TypeBox can be used to register string formats.
+
+```ts
+import { Format } from '@fastify/type-provider-typebox'
+
+Format.Set('custom-format', (value) => value === 'custom');
+Format.Set('regex-format', (value) => /^my-format$/.test(value));
+```
+
+See the [official TypeBox documentation](https://sinclairzx81.github.io/typebox/#/docs/format/overview) for additional information on formats.
+
 ## License
 
 Licensed under [MIT](./LICENSE).
