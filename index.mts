@@ -6,13 +6,14 @@ import {
   FastifySchemaValidationError,
   FastifyTypeProvider,
   RawServerBase,
-  RawServerDefault
-} from 'fastify'
-import { Compile } from 'typebox/compile'
-import { type Static, type TSchema } from 'typebox'
-import { Value } from 'typebox/value'
-export * from 'typebox'
-export { default as Format } from 'typebox/format'
+  RawServerDefault,
+} from "fastify";
+import { type Static, type TSchema } from "typebox";
+import { Compile } from "typebox/compile";
+import { Value } from "typebox/value";
+export * from "typebox";
+export { default as Format } from "typebox/format";
+export { registerTypeBoxFormats } from "./formats.js";
 /**
  * Enables TypeBox schema validation
  *
@@ -24,19 +25,19 @@ export { default as Format } from 'typebox/format'
  * ```
  */
 export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema, httpPart }) => {
-  const typeCheck = Compile(schema)
+  const typeCheck = Compile(schema);
   return (value): any /* TODO: remove any for next major */ => {
     // Note: Only support value conversion for querystring, params and header schematics
-    const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
+    const converted = httpPart === "body" ? value : Value.Convert(schema, value);
     if (typeCheck.Check(converted)) {
-      return { value: converted }
+      return { value: converted };
     }
     const errors: FastifySchemaValidationError[] = typeCheck.Errors(converted);
     return {
-      error: errors
-    }
-  }
-}
+      error: errors,
+    };
+  };
+};
 
 /**
  * Enables automatic type inference on a Fastify instance.
@@ -49,8 +50,8 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
  * ```
  */
 export interface TypeBoxTypeProvider extends FastifyTypeProvider {
-  validator: this['schema'] extends TSchema ? Static<this['schema']> : unknown
-  serializer: this['schema'] extends TSchema ? Static<this['schema']> : unknown
+  validator: this["schema"] extends TSchema ? Static<this["schema"]> : unknown;
+  serializer: this["schema"] extends TSchema ? Static<this["schema"]> : unknown;
 }
 
 /**
@@ -66,9 +67,9 @@ export interface TypeBoxTypeProvider extends FastifyTypeProvider {
  * ```
  */
 export type FastifyPluginCallbackTypebox<
-    Options extends FastifyPluginOptions = Record<never, never>,
-    Server extends RawServerBase = RawServerDefault,
-> = FastifyPluginCallback<Options, Server, TypeBoxTypeProvider>
+  Options extends FastifyPluginOptions = Record<never, never>,
+  Server extends RawServerBase = RawServerDefault,
+> = FastifyPluginCallback<Options, Server, TypeBoxTypeProvider>;
 
 /**
  * FastifyPluginAsync with Typebox automatic type inference
@@ -83,5 +84,5 @@ export type FastifyPluginCallbackTypebox<
  */
 export type FastifyPluginAsyncTypebox<
   Options extends FastifyPluginOptions = Record<never, never>,
-  Server extends RawServerBase = RawServerDefault
-> = FastifyPluginAsync<Options, Server, TypeBoxTypeProvider>
+  Server extends RawServerBase = RawServerDefault,
+> = FastifyPluginAsync<Options, Server, TypeBoxTypeProvider>;

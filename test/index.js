@@ -3,7 +3,7 @@
 const { test } = require('node:test')
 const assert = require('node:assert')
 const Fastify = require('fastify')
-const { Format, Type, TypeBoxValidatorCompiler } = require('../dist/cjs/index')
+const { Format, Type, TypeBoxValidatorCompiler, registerTypeBoxFormats } = require('../dist/cjs/index')
 
 test('should compile typebox schema without configuration', async () => {
   const fastify = Fastify().get('/', {
@@ -184,6 +184,25 @@ test('should validate body with a custom format', async () => {
       })
     }
   }, (req, res) => res.send(req.body))
+
+  test('should validate body with date format after registering formats', async () => {
+    registerTypeBoxFormats()
+
+    const schema = Type.Object({
+      date: Type.String({ format: 'date' })
+    })
+
+    const validate = TypeBoxValidatorCompiler({
+      schema,
+      httpPart: 'body'
+    })
+
+    const result = validate({ date: '2026-01-01' })
+
+    assert.deepStrictEqual(result, {
+      value: { date: '2026-01-01' }
+    })
+  })
 
   const validValue = '123abc'
   const { prop } = await fastify.inject()
