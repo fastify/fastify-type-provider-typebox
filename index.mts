@@ -8,11 +8,21 @@ import {
   RawServerBase,
   RawServerDefault
 } from 'fastify'
-import { Compile } from 'typebox/compile'
 import { type Static, type TSchema } from 'typebox'
+import { Compile } from 'typebox/compile'
+import Format from 'typebox/format'
 import { Value } from 'typebox/value'
+import { registerTypeBoxFormatsWith } from './formats.js'
 export * from 'typebox'
 export { default as Format } from 'typebox/format'
+
+export function registerTypeBoxFormats() {
+  // reuse the already exported Format from this module
+  // so CJS and ESM both work
+
+  registerTypeBoxFormatsWith(Format)
+}
+
 /**
  * Enables TypeBox schema validation
  *

@@ -208,6 +208,17 @@ Format.Set('regex-format', (value) => /^my-format$/.test(value));
 
 See the [official TypeBox documentation](https://sinclairzx81.github.io/typebox/#/docs/format/overview) for additional information on formats.
 
+### String formats with TypeBox
+
+TypeBox does not register string formats by default.
+When using `TypeBoxValidatorCompiler`, formats such as `date` or `date-time`
+must be registered explicitly.
+
+```ts
+import { registerTypeBoxFormats } from '@fastify/type-provider-typebox'
+
+await registerTypeBoxFormats()
+
 ## License
 
 Licensed under [MIT](./LICENSE).
