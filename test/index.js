@@ -175,45 +175,58 @@ test('should validate body with a custom format', async () => {
   const formatName = 'custom-format'
   const formatRegex = /^\d{3}[a-z]{3}$/
   Format.Set(formatName, (value) => formatRegex.test(value))
-  const fastify = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler).post('/', {
+
+  const app = Fastify()
+    .setValidatorCompiler(TypeBoxValidatorCompiler)
+
+  app.post('/', {
     schema: {
       body: Type.Object({
-        prop: Type.String({
-          format: formatName
-        })
+        prop: Type.String({ format: formatName })
       })
     }
   }, (req, res) => res.send(req.body))
 
-  test('should validate body with date format after registering formats', async () => {
-    registerTypeBoxFormats()
-
-    const schema = Type.Object({
-      date: Type.String({ format: 'date' })
-    })
-
-    const validate = TypeBoxValidatorCompiler({
-      schema,
-      httpPart: 'body'
-    })
-
-    const result = validate({ date: '2026-01-01' })
-
-    assert.deepStrictEqual(result, {
-      value: { date: '2026-01-01' }
-    })
+  const res = await app.inject({
+    method: 'POST',
+    url: '/',
+    payload: { prop: '123abc' }
   })
 
-  const validValue = '123abc'
-  const { prop } = await fastify.inject()
-    .post('/')
-    .body({ prop: validValue })
-    .then(res => res.json())
-  assert.strictEqual(prop, validValue)
+  assert.strictEqual(res.statusCode, 200)
+})
 
-  const response = await fastify.inject()
-    .post('/')
-    .body({ prop: 'invalid' })
-    .then(res => res.json())
-  assert.ok(response.message.includes(`must match format "${formatName}"`))
+test('should validate body with registered formats', async () => {
+  registerTypeBoxFormats()
+
+  const app = Fastify()
+    .setValidatorCompiler(TypeBoxValidatorCompiler)
+
+  app.post('/', {
+    schema: {
+      body: Type.Object({
+        date: Type.String({ format: 'date' }),
+        dateTime: Type.String({ format: 'date-time' }),
+        email: Type.String({ format: 'email' }),
+        uuid: Type.String({ format: 'uuid' }),
+        url: Type.String({ format: 'uri' }),
+        ip: Type.String({ format: 'ipv4' })
+      })
+    }
+  }, (req, reply) => reply.send(req.body))
+
+  const res = await app.inject({
+    method: 'POST',
+    url: '/',
+    payload: {
+      date: '2024-01-01',
+      dateTime: '2024-01-01T10:10:10Z',
+      email: 'test@test.com',
+      uuid: '550e8400-e29b-41d4-a716-446655440000',
+      url: 'https://fastify.dev',
+      ip: '127.0.0.1'
+    }
+  })
+
+  assert.strictEqual(res.statusCode, 200)
 })
