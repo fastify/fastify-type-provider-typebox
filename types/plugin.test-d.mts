@@ -1,4 +1,4 @@
-import { Type, FastifyPluginAsyncTypebox, FastifyPluginCallbackTypebox } from '../index.mjs'
+import { Type, FastifyPluginAsyncTypebox, FastifyPluginCallbackTypebox } from '../index.js'
 import { expectType } from 'tsd'
 import Fastify, { FastifyPluginAsync, FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'

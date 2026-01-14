@@ -31,7 +31,7 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
     if (typeCheck.Check(converted)) {
       return { value: converted }
     }
-    const errors: FastifySchemaValidationError[] = typeCheck.Errors(converted);
+    const errors: FastifySchemaValidationError[] = typeCheck.Errors(converted)
     return {
       error: errors
     }
