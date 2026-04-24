@@ -3,7 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "sourceMap": true,
-    "declaration": true
+    "declaration": true,
+    "module": "Node16",
+    "moduleResolution": "Node16"
   },
   "exclude": ["./node_modules", "types/**/*.test-d.mts"]
 }
