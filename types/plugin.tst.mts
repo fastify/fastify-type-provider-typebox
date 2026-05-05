@@ -1,5 +1,5 @@
 import { Type, FastifyPluginAsyncTypebox, FastifyPluginCallbackTypebox } from '../index.js'
-import { expectType } from 'tsd'
+import { expect } from 'tstyche';
 import Fastify, { FastifyPluginAsync, FastifyPluginCallback } from 'fastify'
 import fp from 'fastify-plugin'
 import { Http2Server } from 'node:http2'
@@ -7,8 +7,8 @@ import { Http2Server } from 'node:http2'
 // Ensure the defaults of FastifyPluginAsyncTypebox are the same as FastifyPluginAsync
 export const pluginAsyncDefaults: FastifyPluginAsync = async (fastify, options) => {
   const pluginAsyncTypeboxDefaults: FastifyPluginAsyncTypebox = async (fastifyWithTypebox, optionsTypebox) => {
-    expectType<typeof fastifyWithTypebox['server']>(fastify.server)
-    expectType<typeof optionsTypebox>(options)
+    expect(fastifyWithTypebox.server).type.toBe<typeof fastify.server>()
+    expect(optionsTypebox).type.toBe<typeof options>()
   }
   fastify.register(pluginAsyncTypeboxDefaults)
 }
@@ -16,17 +16,16 @@ export const pluginAsyncDefaults: FastifyPluginAsync = async (fastify, options) 
 // Ensure the defaults of FastifyPluginCallbackTypebox are the same as FastifyPluginCallback
 export const pluginCallbackDefaults: FastifyPluginCallback = async (fastify, options, done) => {
   const pluginCallbackTypeboxDefaults: FastifyPluginCallbackTypebox = async (fastifyWithTypebox, optionsTypebox, doneTypebox) => {
-    expectType<typeof fastifyWithTypebox['server']>(fastify.server)
-    expectType<typeof optionsTypebox>(options)
+    expect(fastifyWithTypebox.server).type.toBe<typeof fastify.server>()
+    expect(optionsTypebox).type.toBe<typeof options>()
   }
 
   fastify.register(pluginCallbackTypeboxDefaults)
 }
 
 const asyncPlugin: FastifyPluginAsyncTypebox<{ optionA: string }, Http2Server> = async (fastify, options) => {
-  expectType<Http2Server>(fastify.server)
-
-  expectType<string>(options.optionA)
+  expect(fastify.server).type.toBe<Http2Server>()
+  expect(options.optionA).type.toBe<string>()
 
   fastify.get('/', {
     schema: {
@@ -37,16 +36,15 @@ const asyncPlugin: FastifyPluginAsyncTypebox<{ optionA: string }, Http2Server> =
       })
     }
   }, (req) => {
-    expectType<boolean>(req.body.z)
-    expectType<number>(req.body.y)
-    expectType<string>(req.body.x)
+    expect(req.body.z).type.toBe<boolean>()
+    expect(req.body.y).type.toBe<number>()
+    expect(req.body.x).type.toBe<string>()
   })
 }
 
 const callbackPlugin: FastifyPluginCallbackTypebox<{ optionA: string }, Http2Server> = (fastify, options, done) => {
-  expectType<Http2Server>(fastify.server)
-
-  expectType<string>(options.optionA)
+  expect(fastify.server).type.toBe<Http2Server>()
+  expect(options.optionA).type.toBe<string>()
 
   fastify.get('/', {
     schema: {
@@ -57,9 +55,9 @@ const callbackPlugin: FastifyPluginCallbackTypebox<{ optionA: string }, Http2Ser
       })
     }
   }, (req) => {
-    expectType<boolean>(req.body.z)
-    expectType<number>(req.body.y)
-    expectType<string>(req.body.x)
+    expect(req.body.z).type.toBe<boolean>()
+    expect(req.body.y).type.toBe<number>()
+    expect(req.body.x).type.toBe<string>()
   })
   done()
 }
