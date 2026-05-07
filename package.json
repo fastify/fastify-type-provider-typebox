@@ -31,7 +31,7 @@
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "test:node": "node --test test/index.cjs",
-    "test:types": "tstyche --tsconfig types/tsconfig.test.json",
+    "test:types": "tstyche",
     "test": "npm-run-all build test:node test:types",
     "prepublishOnly": "npm run build"
   },
