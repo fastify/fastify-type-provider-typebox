@@ -7,8 +7,8 @@ import { Http2Server } from 'node:http2'
 // Ensure the defaults of FastifyPluginAsyncTypebox are the same as FastifyPluginAsync
 export const pluginAsyncDefaults: FastifyPluginAsync = async (fastify, options) => {
   const pluginAsyncTypeboxDefaults: FastifyPluginAsyncTypebox = async (fastifyWithTypebox, optionsTypebox) => {
-    expect(fastifyWithTypebox.server).type.toBe<typeof fastify.server>()
-    expect(optionsTypebox).type.toBe<typeof options>()
+    expect(fastifyWithTypebox.server).type.toBe(fastify.server)
+    expect(optionsTypebox).type.toBe(options)
   }
   fastify.register(pluginAsyncTypeboxDefaults)
 }
@@ -16,8 +16,8 @@ export const pluginAsyncDefaults: FastifyPluginAsync = async (fastify, options) 
 // Ensure the defaults of FastifyPluginCallbackTypebox are the same as FastifyPluginCallback
 export const pluginCallbackDefaults: FastifyPluginCallback = async (fastify, options, done) => {
   const pluginCallbackTypeboxDefaults: FastifyPluginCallbackTypebox = async (fastifyWithTypebox, optionsTypebox, doneTypebox) => {
-    expect(fastifyWithTypebox.server).type.toBe<typeof fastify.server>()
-    expect(optionsTypebox).type.toBe<typeof options>()
+    expect(fastifyWithTypebox.server).type.toBe(fastify.server)
+    expect(optionsTypebox).type.toBe(options)
   }
 
   fastify.register(pluginCallbackTypeboxDefaults)
