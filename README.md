@@ -217,7 +217,8 @@ must be registered explicitly.
 ```ts
 import { registerTypeBoxFormats } from '@fastify/type-provider-typebox'
 
-registerTypeBoxFormats()
+registerAjvFormats()
+```
 
 ## License
 

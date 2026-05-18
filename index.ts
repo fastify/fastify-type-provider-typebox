@@ -27,7 +27,7 @@ function isAjvFormat (value: unknown): value is AjvFormat {
   return typeof value === 'object' && value !== null && 'validate' in value
 }
 
-export function registerTypeBoxFormats () {
+export function registerAjvFormats () {
   const formats = rawFormats as Record<string, unknown>
 
   for (const [name, def] of Object.entries(formats)) {

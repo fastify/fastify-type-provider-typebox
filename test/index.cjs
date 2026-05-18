@@ -3,7 +3,7 @@
 const { test } = require('node:test')
 const assert = require('node:assert')
 const Fastify = require('fastify')
-const { Format, Type, TypeBoxValidatorCompiler, registerTypeBoxFormats } = require('../dist/cjs/index')
+const { Format, Type, TypeBoxValidatorCompiler, registerAjvFormats } = require('../dist/cjs/index')
 
 test('should compile typebox schema without configuration', async () => {
   const fastify = Fastify().get('/', {
@@ -197,7 +197,7 @@ test('should validate body with a custom format', async () => {
 })
 
 test('should validate body with registered formats', async () => {
-  registerTypeBoxFormats()
+  registerAjvFormats()
 
   const app = Fastify()
     .setValidatorCompiler(TypeBoxValidatorCompiler)
