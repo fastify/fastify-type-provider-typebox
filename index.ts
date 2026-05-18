@@ -1,3 +1,4 @@
+import * as rawFormatsModule from 'ajv-formats/dist/formats.js'
 import {
   FastifyPluginAsync,
   FastifyPluginCallback,
@@ -12,15 +13,28 @@ import { type Static, type TSchema } from 'typebox'
 import { Compile } from 'typebox/compile'
 import Format from 'typebox/format'
 import { Value } from 'typebox/value'
-import { registerTypeBoxFormatsWith } from './formats.js'
+
 export * from 'typebox'
 export { default as Format } from 'typebox/format'
 
-export function registerTypeBoxFormats () {
-  // reuse the already exported Format from this module
-  // so CJS and ESM both work
+const rawFormats = (rawFormatsModule as any).default ?? rawFormatsModule
 
-  registerTypeBoxFormatsWith(Format)
+type AjvFormat = {
+  validate: (value: string) => boolean
+}
+
+function isAjvFormat (value: unknown): value is AjvFormat {
+  return typeof value === 'object' && value !== null && 'validate' in value
+}
+
+export function registerTypeBoxFormats () {
+  const formats = rawFormats as Record<string, unknown>
+
+  for (const [name, def] of Object.entries(formats)) {
+    if (isAjvFormat(def)) {
+      Format.Set(name, def.validate)
+    }
+  }
 }
 
 /**
