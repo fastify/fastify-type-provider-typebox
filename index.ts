@@ -1,4 +1,4 @@
-import * as rawFormatsModule from 'ajv-formats/dist/formats.js'
+import * as ajvFormats from 'ajv-formats'
 import {
   FastifyPluginAsync,
   FastifyPluginCallback,
@@ -17,7 +17,9 @@ import { Value } from 'typebox/value'
 export * from 'typebox'
 export { default as Format } from 'typebox/format'
 
-const rawFormats = (rawFormatsModule as any).default ?? rawFormatsModule
+const rawFormats = (ajvFormats as any).default?.default ??
+                     (ajvFormats as any).default ??
+                     ajvFormats
 
 type AjvFormat = {
   validate: (value: string) => boolean
