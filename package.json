@@ -21,6 +21,9 @@
   "peerDependencies": {
     "typebox": "^1.1.14"
   },
+  "dependencies": {
+    "ajv-formats": "^3.0.1"
+  },
   "scripts": {
     "build:clean": "rimraf ./dist",
     "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution bundler --declaration --sourcemap false",

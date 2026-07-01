@@ -1,3 +1,4 @@
+import * as ajvFormats from 'ajv-formats'
 import {
   FastifyPluginAsync,
   FastifyPluginCallback,
@@ -8,11 +9,36 @@ import {
   RawServerBase,
   RawServerDefault
 } from 'fastify'
-import { Compile } from 'typebox/compile'
 import { type Static, type TSchema } from 'typebox'
+import { Compile } from 'typebox/compile'
+import Format from 'typebox/format'
 import { Value } from 'typebox/value'
+
 export * from 'typebox'
 export { default as Format } from 'typebox/format'
+
+const rawFormats = (ajvFormats as any).default?.default ??
+                     (ajvFormats as any).default ??
+                     ajvFormats
+
+type AjvFormat = {
+  validate: (value: string) => boolean
+}
+
+function isAjvFormat (value: unknown): value is AjvFormat {
+  return typeof value === 'object' && value !== null && 'validate' in value
+}
+
+export function registerAjvFormats () {
+  const formats = rawFormats as Record<string, unknown>
+
+  for (const [name, def] of Object.entries(formats)) {
+    if (isAjvFormat(def)) {
+      Format.Set(name, def.validate)
+    }
+  }
+}
+
 /**
  * Enables TypeBox schema validation
  *
@@ -69,7 +95,7 @@ export interface TypeBoxTypeProvider extends FastifyTypeProvider {
  */
 export type FastifyPluginCallbackTypebox<
     Options extends FastifyPluginOptions = Record<never, never>,
-    Server extends RawServerBase = RawServerDefault,
+    Server extends RawServerBase = RawServerDefault
 > = FastifyPluginCallback<Options, Server, TypeBoxTypeProvider>
 
 /**
