@@ -193,7 +193,7 @@ fastify.withTypeProvider<TypeBoxTypeProvider>().get('/', {
 })
 ```
 
-For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#Compile).
+For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#compile).
 
 ## Register formats
 
