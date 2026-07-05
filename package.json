@@ -19,7 +19,8 @@
     }
   },
   "peerDependencies": {
-    "typebox": "^1.1.14"
+    "typebox": "^1.1.14",
+    "ajv-formats": "^3.0.1"
   },
   "scripts": {
     "build:clean": "rimraf ./dist",
