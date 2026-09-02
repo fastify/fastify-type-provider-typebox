@@ -19,8 +19,8 @@
     }
   },
   "peerDependencies": {
-    "typebox": "^1.1.14",
-    "ajv-formats": "^3.0.1"
+    "ajv-formats": "^3.0.1",
+    "typebox": "^1.1.14"
   },
   "scripts": {
     "build:clean": "rimraf ./dist",
@@ -31,7 +31,7 @@
     "build": "npm-run-all build:clean build:cjs build:esm build:post build:test",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "test:node": "node --test test/index.cjs",
+    "test:node": "c8 --100 --include 'dist/esm/**' node --test test/index.mjs",
     "test:types": "tstyche",
     "test": "npm-run-all build test:node test:types",
     "prepublishOnly": "npm run build"
@@ -87,6 +87,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.1",
     "@types/node": "^26.0.0",
+    "c8": "^12.0.0",
     "eslint": "^9.17.0",
     "fastify": "^5.0.0",
     "fastify-plugin": "^6.0.0",

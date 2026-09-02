@@ -1,4 +1,5 @@
 import * as ajvFormats from 'ajv-formats'
+import { type FormatName } from 'ajv-formats'
 import {
   FastifyPluginAsync,
   FastifyPluginCallback,
@@ -17,9 +18,36 @@ import { Value } from 'typebox/value'
 export * from 'typebox'
 export { default as Format } from 'typebox/format'
 
-const rawFormats = (ajvFormats as any).default?.default ??
-                     (ajvFormats as any).default ??
-                     ajvFormats
+const formatNamesMapper = {
+  date: true,
+  time: true,
+  'date-time': true,
+  'iso-time': true,
+  'iso-date-time': true,
+  duration: true,
+  uri: true,
+  'uri-reference': true,
+  'uri-template': true,
+  url: true,
+  email: true,
+  hostname: true,
+  ipv4: true,
+  ipv6: true,
+  regex: true,
+  uuid: true,
+  'json-pointer': true,
+  'json-pointer-uri-fragment': true,
+  'relative-json-pointer': true,
+  byte: true,
+  int32: true,
+  int64: true,
+  float: true,
+  double: true,
+  password: true,
+  binary: true,
+} as const satisfies Record<FormatName, true>
+
+const formatNames = Object.keys(formatNamesMapper) as FormatName[]
 
 type AjvFormat = {
   validate: (value: string) => boolean
@@ -29,13 +57,25 @@ function isAjvFormat (value: unknown): value is AjvFormat {
   return typeof value === 'object' && value !== null && 'validate' in value
 }
 
-export function registerAjvFormats () {
-  const formats = rawFormats as Record<string, unknown>
+function getFormatValidator (format: unknown): (value: string) => boolean {
+  if (format === true) {
+    return () => true
+  }
+  if (format instanceof RegExp) {
+    return (value) => format.test(value)
+  }
+  if (typeof format === 'function') {
+    return format as (value: string) => boolean
+  }
+  if (isAjvFormat(format)) {
+    return format.validate
+  }
+  throw new TypeError('Unsupported AJV format definition')
+}
 
-  for (const [name, def] of Object.entries(formats)) {
-    if (isAjvFormat(def)) {
-      Format.Set(name, def.validate)
-    }
+export function registerAjvFormats () {
+  for (const name of formatNames) {
+    Format.Set(name, getFormatValidator(ajvFormats.default.default.get(name)))
   }
 }
 
@@ -49,11 +89,15 @@ export function registerAjvFormats () {
  * const server = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler)
  * ```
  */
-export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema, httpPart }) => {
+export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({
+  schema,
+  httpPart,
+}) => {
   const typeCheck = Compile(schema)
   return (value): any /* TODO: remove any for next major */ => {
     // Note: Only support value conversion for querystring, params and header schematics
-    const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
+    const converted =
+      httpPart === 'body' ? value : Value.Convert(schema, value)
     if (typeCheck.Check(converted)) {
       return { value: converted }
     }
@@ -61,7 +105,7 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
     const errors: FastifySchemaValidationError[] = typeCheck.Errors(converted)
 
     return {
-      error: errors
+      error: errors,
     }
   }
 }
@@ -77,8 +121,8 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schem
  * ```
  */
 export interface TypeBoxTypeProvider extends FastifyTypeProvider {
-  validator: this['schema'] extends TSchema ? Static<this['schema']> : unknown
-  serializer: this['schema'] extends TSchema ? Static<this['schema']> : unknown
+  validator: this['schema'] extends TSchema ? Static<this['schema']> : unknown;
+  serializer: this['schema'] extends TSchema ? Static<this['schema']> : unknown;
 }
 
 /**
@@ -94,8 +138,8 @@ export interface TypeBoxTypeProvider extends FastifyTypeProvider {
  * ```
  */
 export type FastifyPluginCallbackTypebox<
-    Options extends FastifyPluginOptions = Record<never, never>,
-    Server extends RawServerBase = RawServerDefault
+  Options extends FastifyPluginOptions = Record<never, never>,
+  Server extends RawServerBase = RawServerDefault
 > = FastifyPluginCallback<Options, Server, TypeBoxTypeProvider>
 
 /**
