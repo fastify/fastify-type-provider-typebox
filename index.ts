@@ -58,6 +58,9 @@ function isAjvFormat (value: unknown): value is AjvFormat {
 }
 
 function getFormatValidator (format: unknown): (value: string) => boolean {
+  if (isAjvFormat(format)) {
+    return format.validate
+  }
   if (format === true) {
     return () => true
   }
@@ -66,9 +69,6 @@ function getFormatValidator (format: unknown): (value: string) => boolean {
   }
   if (typeof format === 'function') {
     return format as (value: string) => boolean
-  }
-  if (isAjvFormat(format)) {
-    return format.validate
   }
   throw new TypeError('Unsupported AJV format definition')
 }
