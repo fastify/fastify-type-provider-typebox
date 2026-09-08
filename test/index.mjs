@@ -1,9 +1,23 @@
-'use strict'
+import { test } from 'node:test'
+import assert from 'node:assert'
+import { createRequire } from 'node:module'
+import * as ajvFormatsNamespace from 'ajv-formats'
+import Fastify from 'fastify'
+import { Format, Type, TypeBoxValidatorCompiler, registerAjvFormats } from '../dist/esm/index.mjs'
 
-const { test } = require('node:test')
-const assert = require('node:assert')
-const Fastify = require('fastify')
-const { Format, Type, TypeBoxValidatorCompiler, registerAjvFormats } = require('../dist/cjs/index')
+// `ajv-formats` is CommonJS, so the mockable plugin object lives on the
+// namespace's default export. The namespace object itself is sealed.
+const ajvFormats = ajvFormatsNamespace.default
+
+test('should expose the same API through the CommonJS build', () => {
+  const require = createRequire(import.meta.url)
+  const cjs = require('../dist/cjs/index.js')
+
+  assert.strictEqual(typeof cjs.TypeBoxValidatorCompiler, 'function')
+  assert.strictEqual(typeof cjs.registerAjvFormats, 'function')
+  assert.strictEqual(typeof cjs.Type.Object, 'function')
+  assert.strictEqual(typeof cjs.Format.Set, 'function')
+})
 
 test('should compile typebox schema without configuration', async () => {
   const fastify = Fastify().get('/', {
@@ -196,8 +210,40 @@ test('should validate body with a custom format', async () => {
   assert.strictEqual(res.statusCode, 200)
 })
 
-test('should validate body with registered formats', async () => {
+test('should validate body with registered formats', async (t) => {
+  Format.Clear()
+  t.after(() => Format.Reset())
+
   registerAjvFormats()
+
+  assert.deepStrictEqual([...Format.Entries()].map(([name]) => name), [
+    'date',
+    'time',
+    'date-time',
+    'iso-time',
+    'iso-date-time',
+    'duration',
+    'uri',
+    'uri-reference',
+    'uri-template',
+    'url',
+    'email',
+    'hostname',
+    'ipv4',
+    'ipv6',
+    'regex',
+    'uuid',
+    'json-pointer',
+    'json-pointer-uri-fragment',
+    'relative-json-pointer',
+    'byte',
+    'int32',
+    'int64',
+    'float',
+    'double',
+    'password',
+    'binary'
+  ])
 
   const app = Fastify()
     .setValidatorCompiler(TypeBoxValidatorCompiler)
@@ -210,7 +256,9 @@ test('should validate body with registered formats', async () => {
         email: Type.String({ format: 'email' }),
         uuid: Type.String({ format: 'uuid' }),
         url: Type.String({ format: 'url' }),
-        ip: Type.String({ format: 'ipv4' })
+        ip: Type.String({ format: 'ipv4' }),
+        uri: Type.String({ format: 'uri' }),
+        password: Type.String({ format: 'password' })
       })
     }
   }, (req, reply) => reply.send(req.body))
@@ -224,9 +272,20 @@ test('should validate body with registered formats', async () => {
       email: 'test@test.com',
       uuid: '550e8400-e29b-41d4-a716-446655440000',
       url: 'https://fastify.dev',
-      ip: '127.0.0.1'
+      ip: '127.0.0.1',
+      uri: 'https://fastify.dev',
+      password: 'secret'
     }
   })
 
   assert.strictEqual(res.statusCode, 200)
+})
+
+test('should reject unsupported AJV format definitions', (t) => {
+  t.mock.method(ajvFormats, 'get', () => null)
+
+  assert.throws(registerAjvFormats, {
+    name: 'TypeError',
+    message: 'Unsupported AJV format definition'
+  })
 })
