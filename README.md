@@ -170,6 +170,37 @@ const plugin: FastifyPluginAsyncTypebox = async function(fastify, _opts) {
 }
 ```
 
+## Usage with JavaScript and JSDoc
+
+In plain JavaScript projects type-checked with `checkJs`, the type provider can be
+applied with a JSDoc type cast:
+
+```js
+import Fastify from 'fastify'
+import { Type } from '@fastify/type-provider-typebox'
+
+/** @typedef {import('fastify').FastifyInstance<import('fastify').RawServerDefault, import('fastify').RawRequestDefaultExpression, import('fastify').RawReplyDefaultExpression, import('fastify').FastifyBaseLogger, import('@fastify/type-provider-typebox').TypeBoxTypeProvider>} FastifyTypeBox */
+
+const fastify = /** @type {FastifyTypeBox} */ (Fastify())
+
+fastify.post('/', {
+  schema: {
+    body: Type.Object({ x: Type.String() })
+  }
+}, (req) => {
+  const { x } = req.body // inferred as string
+})
+```
+
+For plugins, annotate the function with the plugin types instead:
+
+```js
+/** @type {import('@fastify/type-provider-typebox').FastifyPluginAsyncTypebox} */
+const plugin = async (fastify) => {
+  // routes registered here get full type inference
+}
+```
+
 ## Type Compiler
 
 TypeBox provides an optional type compiler that perform very fast runtime type checking for data received on routes. Note this compiler is limited to types expressable through the TypeBox `Type.*` namespace only. To enable this compiler, you can call `.setValidatorCompiler(...)` with the `TypeBoxValidatorCompiler` export provided by this package.
