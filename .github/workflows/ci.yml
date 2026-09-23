@@ -84,6 +84,101 @@ jobs:
         - name: Run tests
           run: npm test
 
+  consumer-types:
+      name: Consumer type resolution
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+      steps:
+        - name: Check out repo
+          uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+          with:
+            persist-credentials: false
+
+        - name: Setup Node
+          uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+          with:
+            check-latest: true
+            node-version: 22
+
+        - name: Install dependencies
+          run: npm i --ignore-scripts
+
+        - name: Build
+          run: npm run build
+
+        - name: Pack
+          run: npm pack --pack-destination "$RUNNER_TEMP"
+
+        - name: Setup pnpm
+          uses: pnpm/action-setup@26f6d4f2c533a43e6b5da0b4a5dd983f98f7b49a # v6.0.4
+          with:
+            version: 10
+
+        - name: Generate consumer workspace
+          run: |
+            consumer="$RUNNER_TEMP/consumer"
+            mkdir -p "$consumer/plugin" "$consumer/app"
+            printf '%s\n' '{' '  "name": "consumer-workspace",' '  "private": true' '}' > "$consumer/package.json"
+            printf '%s\n' 'packages:' '  - app' '  - plugin' > "$consumer/pnpm-workspace.yaml"
+            version=$(node -p "require('./package.json').version")
+            tar -xzf "$RUNNER_TEMP/fastify-type-provider-typebox-$version.tgz" -C "$consumer/plugin" --strip-components=1
+            # A registry install never installs a dependency's devDependencies;
+            # strip them so the plugin's published declarations resolve like a consumer install.
+            node -e "const fs=require('fs');const p=require(process.argv[1]);delete p.devDependencies;fs.writeFileSync(process.argv[1],JSON.stringify(p,null,2)+'\n')" "$consumer/plugin/package.json"
+            cat > "$consumer/app/package.json" <<'EOF'
+            {
+              "name": "consumer-app",
+              "private": true,
+              "type": "module",
+              "dependencies": {
+                "@fastify/type-provider-typebox": "workspace:*",
+                "fastify": "^5.0.0",
+                "typebox": "^1.1.14",
+                "ajv-formats": "^3.0.1"
+              },
+              "devDependencies": {
+                "@types/node": "^24.0.0",
+                "typescript": "~6.0.2"
+              }
+            }
+            EOF
+            cat > "$consumer/app/tsconfig.json" <<'EOF'
+            {
+              "compilerOptions": {
+                "strict": true,
+                "target": "ES2022",
+                "module": "NodeNext",
+                "moduleResolution": "NodeNext",
+                "noEmit": true,
+                "types": ["node"],
+                "skipLibCheck": false
+              },
+              "include": ["index.ts"]
+            }
+            EOF
+            cat > "$consumer/app/index.ts" <<'EOF'
+            import Fastify from 'fastify'
+            import { Type, TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+
+            const fastify = Fastify().withTypeProvider<TypeBoxTypeProvider>()
+
+            fastify.post('/', {
+              schema: { body: Type.Object({ x: Type.String() }) }
+            }, (req) => {
+              const { x } = req.body
+              return { x }
+            })
+            EOF
+
+        - name: Install consumer dependencies
+          run: pnpm install
+          working-directory: "$RUNNER_TEMP/consumer"
+
+        - name: Type-check consumer
+          run: pnpm exec tsc --noEmit
+          working-directory: "$RUNNER_TEMP/consumer/app"
+
   automerge:
     name: Automatically merge Dependabot pull requests
     if: >
