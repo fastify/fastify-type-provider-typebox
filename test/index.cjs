@@ -3,7 +3,7 @@
 const { test } = require('node:test')
 const assert = require('node:assert')
 const Fastify = require('fastify')
-const { Format, Type, TypeBoxValidatorCompiler, registerAjvFormats } = require('../dist/cjs/index')
+const { Format, Type, TypeBoxValidatorCompiler, createTypeBoxValidatorCompiler, registerAjvFormats } = require('../dist/cjs/index')
 
 test('should compile typebox schema without configuration', async () => {
   const fastify = Fastify().get('/', {
@@ -229,4 +229,147 @@ test('should validate body with registered formats', async () => {
   })
 
   assert.strictEqual(res.statusCode, 200)
+})
+
+test('should validate schemas with referenced schemas using createTypeBoxValidatorCompiler (array references)', async () => {
+  const Address = Type.Object({
+    street: Type.String(),
+    city: Type.String()
+  }, { $id: 'Address' })
+
+  const User = Type.Object({
+    name: Type.String(),
+    address: Type.Ref('Address')
+  })
+
+  const app = Fastify().setValidatorCompiler(createTypeBoxValidatorCompiler({
+    references: [Address]
+  }))
+
+  app.post('/user', {
+    schema: {
+      body: User
+    }
+  }, (req, reply) => reply.send(req.body))
+
+  const validRes = await app.inject({
+    method: 'POST',
+    url: '/user',
+    payload: {
+      name: 'Alice',
+      address: {
+        street: '123 Main St',
+        city: 'Metropolis'
+      }
+    }
+  })
+
+  assert.strictEqual(validRes.statusCode, 200)
+  assert.deepStrictEqual(validRes.json(), {
+    name: 'Alice',
+    address: {
+      street: '123 Main St',
+      city: 'Metropolis'
+    }
+  })
+
+  const invalidRes = await app.inject({
+    method: 'POST',
+    url: '/user',
+    payload: {
+      name: 'Alice',
+      address: {
+        street: 123
+      }
+    }
+  })
+
+  assert.strictEqual(invalidRes.statusCode, 400)
+})
+
+test('should validate schemas with referenced schemas using createTypeBoxValidatorCompiler (record references)', async () => {
+  const Role = Type.Object({
+    title: Type.String(),
+    level: Type.Number()
+  })
+
+  const Employee = Type.Object({
+    id: Type.String(),
+    role: Type.Ref('Role')
+  })
+
+  const app = Fastify().setValidatorCompiler(createTypeBoxValidatorCompiler({
+    references: { Role }
+  }))
+
+  app.post('/employee', {
+    schema: {
+      body: Employee
+    }
+  }, (req, reply) => reply.send(req.body))
+
+  const validRes = await app.inject({
+    method: 'POST',
+    url: '/employee',
+    payload: {
+      id: 'emp-1',
+      role: {
+        title: 'Engineer',
+        level: 3
+      }
+    }
+  })
+
+  assert.strictEqual(validRes.statusCode, 200)
+  assert.deepStrictEqual(validRes.json(), {
+    id: 'emp-1',
+    role: {
+      title: 'Engineer',
+      level: 3
+    }
+  })
+
+  const invalidRes = await app.inject({
+    method: 'POST',
+    url: '/employee',
+    payload: {
+      id: 'emp-1',
+      role: {
+        title: 'Engineer',
+        level: 'senior'
+      }
+    }
+  })
+
+  assert.strictEqual(invalidRes.statusCode, 400)
+})
+
+test('should convert querystring with referenced schemas using createTypeBoxValidatorCompiler', async () => {
+  const Filter = Type.Object({
+    limit: Type.Number(),
+    offset: Type.Number()
+  }, { $id: 'Filter' })
+
+  const app = Fastify().setValidatorCompiler(createTypeBoxValidatorCompiler({
+    references: [Filter]
+  }))
+
+  app.get('/items', {
+    schema: {
+      querystring: Type.Ref('Filter')
+    }
+  }, (req, reply) => reply.send(req.query))
+
+  const res = await app.inject({
+    method: 'GET',
+    url: '/items',
+    query: {
+      limit: '10',
+      offset: '20'
+    }
+  })
+
+  assert.strictEqual(res.statusCode, 200)
+  assert.strictEqual(res.json().limit, 10)
+  assert.strictEqual(res.json().offset, 20)
 })

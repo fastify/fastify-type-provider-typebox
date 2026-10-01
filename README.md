@@ -224,6 +224,37 @@ fastify.withTypeProvider<TypeBoxTypeProvider>().get('/', {
 })
 ```
 
+### Referenced Schemas (`Type.Ref`)
+
+To support schemas that reference shared definitions via `Type.Ref(...)`, use `createTypeBoxValidatorCompiler` and supply the referenced schemas through the `references` option:
+
+```ts
+import { Type, TypeBoxTypeProvider, createTypeBoxValidatorCompiler } from '@fastify/type-provider-typebox'
+import Fastify from 'fastify'
+
+const Address = Type.Object({
+  street: Type.String(),
+  city: Type.String()
+}, { $id: 'Address' })
+
+const User = Type.Object({
+  name: Type.String(),
+  address: Type.Ref(Address)
+})
+
+const fastify = Fastify().setValidatorCompiler(createTypeBoxValidatorCompiler({
+  references: [Address]
+}))
+
+fastify.withTypeProvider<TypeBoxTypeProvider>().post('/user', {
+  schema: {
+    body: User
+  }
+}, (req, reply) => {
+  reply.send(req.body)
+})
+```
+
 For additional information on this compiler, please refer to the TypeBox documentation located [here](https://github.com/sinclairzx81/typebox#compile).
 
 ## Register formats

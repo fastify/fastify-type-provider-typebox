@@ -39,6 +39,62 @@ export function registerAjvFormats () {
   }
 }
 
+export interface TypeBoxValidatorCompilerOptions {
+  /**
+   * Schemas referenced via Type.Ref() to be passed as context to the TypeBox compiler and converter.
+   * Can be provided as an array of schemas with `$id` properties or as a dictionary mapping IDs to schemas.
+   */
+  references?: TSchema[] | Record<string, TSchema>
+}
+
+function resolveContext (references?: TSchema[] | Record<string, TSchema>): Record<string, TSchema> | undefined {
+  if (!references) return undefined
+  if (Array.isArray(references)) {
+    const context: Record<string, TSchema> = {}
+    for (const schema of references) {
+      if (typeof schema === 'object' && schema !== null && '$id' in schema && typeof schema.$id === 'string') {
+        context[schema.$id] = schema
+      }
+    }
+    return context
+  }
+  return references
+}
+
+/**
+ * Creates a TypeBox validator compiler with custom options, such as referenced schemas.
+ *
+ * @example
+ * ```typescript
+ * import Fastify from 'fastify'
+ * import { createTypeBoxValidatorCompiler, Type } from '@fastify/type-provider-typebox'
+ *
+ * const Address = Type.Object({ street: Type.String() }, { $id: 'Address' })
+ * const server = Fastify().setValidatorCompiler(createTypeBoxValidatorCompiler({ references: [Address] }))
+ * ```
+ */
+export function createTypeBoxValidatorCompiler (options?: TypeBoxValidatorCompilerOptions): FastifySchemaCompiler<TSchema> {
+  const context = resolveContext(options?.references)
+  return ({ schema, httpPart }) => {
+    const typeCheck = context ? Compile(context, schema) : Compile(schema)
+    return (value): any /* TODO: remove any for next major */ => {
+      // Note: Only support value conversion for querystring, params and header schematics
+      const converted = httpPart === 'body'
+        ? value
+        : (context ? Value.Convert(context, schema, value) : Value.Convert(schema, value))
+      if (typeCheck.Check(converted)) {
+        return { value: converted }
+      }
+
+      const errors: FastifySchemaValidationError[] = typeCheck.Errors(converted)
+
+      return {
+        error: errors
+      }
+    }
+  }
+}
+
 /**
  * Enables TypeBox schema validation
  *
@@ -49,22 +105,7 @@ export function registerAjvFormats () {
  * const server = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler)
  * ```
  */
-export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema, httpPart }) => {
-  const typeCheck = Compile(schema)
-  return (value): any /* TODO: remove any for next major */ => {
-    // Note: Only support value conversion for querystring, params and header schematics
-    const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
-    if (typeCheck.Check(converted)) {
-      return { value: converted }
-    }
-
-    const errors: FastifySchemaValidationError[] = typeCheck.Errors(converted)
-
-    return {
-      error: errors
-    }
-  }
-}
+export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = createTypeBoxValidatorCompiler()
 
 /**
  * Enables automatic type inference on a Fastify instance.
@@ -86,7 +127,7 @@ export interface TypeBoxTypeProvider extends FastifyTypeProvider {
  *
  * @example
  * ```typescript
- * import { FastifyPluginCallbackTypebox } fromg "@fastify/type-provider-typebox"
+ * import { FastifyPluginCallbackTypebox } from "@fastify/type-provider-typebox"
  *
  * const plugin: FastifyPluginCallbackTypebox = (fastify, options, done) => {
  *   done()
