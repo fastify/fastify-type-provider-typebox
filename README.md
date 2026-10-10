@@ -241,15 +241,25 @@ See the [official TypeBox documentation](https://sinclairzx81.github.io/typebox/
 
 ### String formats with TypeBox
 
-TypeBox does not register string formats by default.
-When using `TypeBoxValidatorCompiler`, formats such as `date` or `date-time`
-must be registered explicitly.
+TypeBox provides built-in string formats. Call `registerAjvFormats()` before
+compiling schemas to use the string formats from `ajv-formats` with
+`TypeBoxValidatorCompiler`. This registers 22 formats in TypeBox's global format
+registry, replacing any existing validators with the same names.
 
 ```ts
-import { registerTypeBoxFormats } from '@fastify/type-provider-typebox'
+import { registerAjvFormats } from '@fastify/type-provider-typebox'
 
 registerAjvFormats()
 ```
+
+The helper uses `ajv-formats`' full validation mode. Its rules differ from
+TypeBox's defaults: `url` rejects `http://localhost:3000`, `email` rejects
+`user@localhost`, `date-time` accepts a space separator, and `uuid` accepts the
+`urn:uuid:` prefix. `password` and `binary` accept any string.
+
+Numeric formats (`int32`, `int64`, `float`, and `double`) are not registered because
+TypeBox's format registry validates strings. Register custom validators with
+`Format.Set()` after calling the helper to override individual formats.
 
 ## License
 

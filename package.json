@@ -24,15 +24,15 @@
   },
   "scripts": {
     "build:clean": "rimraf ./dist",
-    "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution bundler --declaration --sourcemap false",
-    "build:esm": "tsc --outDir dist/esm --module NodeNext --moduleResolution NodeNext --declaration --sourcemap false",
+    "build:cjs": "tsc --outDir dist/cjs --module CommonJS --moduleResolution bundler --declaration",
+    "build:esm": "tsc --outDir dist/esm --module NodeNext --moduleResolution NodeNext --declaration",
     "build:post": "node post-build.js",
     "build:test": "attw --pack .",
     "build": "npm-run-all build:clean build:cjs build:esm build:post build:test",
     "release:build": "npm run build",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "test:node": "node --test test/index.cjs",
+    "test:node": "c8 --100 --all --include \"dist/**\" --extension .js --extension .mjs node --test test/index.cjs test/index.mjs",
     "test:types": "tstyche",
     "test": "npm-run-all build test:node test:types",
     "prepublishOnly": "npm run build"
@@ -88,6 +88,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.1",
     "@types/node": "^26.0.0",
+    "c8": "^12.0.0",
     "eslint": "^9.17.0",
     "fastify": "^5.0.0",
     "fastify-plugin": "^6.0.0",

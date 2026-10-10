@@ -1,4 +1,5 @@
 import * as ajvFormats from 'ajv-formats'
+import { type FormatName, type FormatsPlugin } from 'ajv-formats'
 import {
   FastifyPluginAsync,
   FastifyPluginCallback,
@@ -17,25 +18,64 @@ import { Value } from 'typebox/value'
 export * from 'typebox'
 export { default as Format } from 'typebox/format'
 
-const rawFormats = (ajvFormats as any).default?.default ??
-                     (ajvFormats as any).default ??
-                     ajvFormats
+// CommonJS, native ESM and bundlers can wrap the plugin in different default exports.
+// Native Node tests cannot exercise every bundler-specific fallback.
+/* c8 ignore next 3 */
+const formatsPlugin = ((ajvFormats as any).default?.default ??
+                        (ajvFormats as any).default ??
+                        ajvFormats) as FormatsPlugin
 
-type AjvFormat = {
+type StringFormatName = Exclude<FormatName, 'int32' | 'int64' | 'float' | 'double'>
+
+const formatNamesMapper = {
+  date: true,
+  time: true,
+  'date-time': true,
+  'iso-time': true,
+  'iso-date-time': true,
+  duration: true,
+  uri: true,
+  'uri-reference': true,
+  'uri-template': true,
+  url: true,
+  email: true,
+  hostname: true,
+  ipv4: true,
+  ipv6: true,
+  regex: true,
+  uuid: true,
+  'json-pointer': true,
+  'json-pointer-uri-fragment': true,
+  'relative-json-pointer': true,
+  byte: true,
+  password: true,
+  binary: true
+} as const satisfies Record<StringFormatName, true>
+
+const formatNames = Object.keys(formatNamesMapper) as StringFormatName[]
+
+type StringFormatValidator = (value: string) => boolean
+type AjvStringFormat = true | RegExp | StringFormatValidator | {
   validate: (value: string) => boolean
 }
 
-function isAjvFormat (value: unknown): value is AjvFormat {
-  return typeof value === 'object' && value !== null && 'validate' in value
+function getFormatValidator (format: AjvStringFormat): StringFormatValidator {
+  if (format === true) {
+    return () => true
+  }
+  if (format instanceof RegExp) {
+    return (value) => format.test(value)
+  }
+  if (typeof format === 'function') {
+    return format
+  }
+  return format.validate
 }
 
 export function registerAjvFormats () {
-  const formats = rawFormats as Record<string, unknown>
-
-  for (const [name, def] of Object.entries(formats)) {
-    if (isAjvFormat(def)) {
-      Format.Set(name, def.validate)
-    }
+  for (const name of formatNames) {
+    // The string-only list uses ajv-formats' full mode, whose validators are synchronous.
+    Format.Set(name, getFormatValidator(formatsPlugin.get(name) as AjvStringFormat))
   }
 }
 
