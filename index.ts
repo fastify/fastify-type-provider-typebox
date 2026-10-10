@@ -1,5 +1,5 @@
 import * as ajvFormats from 'ajv-formats'
-import { type FormatName } from 'ajv-formats'
+import { type FormatName, type FormatsPlugin } from 'ajv-formats'
 import {
   FastifyPluginAsync,
   FastifyPluginCallback,
@@ -17,6 +17,15 @@ import { Value } from 'typebox/value'
 
 export * from 'typebox'
 export { default as Format } from 'typebox/format'
+
+// CommonJS, native ESM and bundlers can wrap the plugin in different default exports.
+// Native Node tests cannot exercise every bundler-specific fallback.
+/* c8 ignore next 3 */
+const formatsPlugin = ((ajvFormats as any).default?.default ??
+                        (ajvFormats as any).default ??
+                        ajvFormats) as FormatsPlugin
+
+type StringFormatName = Exclude<FormatName, 'int32' | 'int64' | 'float' | 'double'>
 
 const formatNamesMapper = {
   date: true,
@@ -39,28 +48,18 @@ const formatNamesMapper = {
   'json-pointer-uri-fragment': true,
   'relative-json-pointer': true,
   byte: true,
-  int32: true,
-  int64: true,
-  float: true,
-  double: true,
   password: true,
-  binary: true,
-} as const satisfies Record<FormatName, true>
+  binary: true
+} as const satisfies Record<StringFormatName, true>
 
-const formatNames = Object.keys(formatNamesMapper) as FormatName[]
+const formatNames = Object.keys(formatNamesMapper) as StringFormatName[]
 
-type AjvFormat = {
+type StringFormatValidator = (value: string) => boolean
+type AjvStringFormat = true | RegExp | StringFormatValidator | {
   validate: (value: string) => boolean
 }
 
-function isAjvFormat (value: unknown): value is AjvFormat {
-  return typeof value === 'object' && value !== null && 'validate' in value
-}
-
-function getFormatValidator (format: unknown): (value: string) => boolean {
-  if (isAjvFormat(format)) {
-    return format.validate
-  }
+function getFormatValidator (format: AjvStringFormat): StringFormatValidator {
   if (format === true) {
     return () => true
   }
@@ -68,14 +67,15 @@ function getFormatValidator (format: unknown): (value: string) => boolean {
     return (value) => format.test(value)
   }
   if (typeof format === 'function') {
-    return format as (value: string) => boolean
+    return format
   }
-  throw new TypeError('Unsupported AJV format definition')
+  return format.validate
 }
 
 export function registerAjvFormats () {
   for (const name of formatNames) {
-    Format.Set(name, getFormatValidator(ajvFormats.default.default.get(name)))
+    // The string-only list uses ajv-formats' full mode, whose validators are synchronous.
+    Format.Set(name, getFormatValidator(formatsPlugin.get(name) as AjvStringFormat))
   }
 }
 
@@ -89,15 +89,11 @@ export function registerAjvFormats () {
  * const server = Fastify().setValidatorCompiler(TypeBoxValidatorCompiler)
  * ```
  */
-export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({
-  schema,
-  httpPart,
-}) => {
+export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({ schema, httpPart }) => {
   const typeCheck = Compile(schema)
   return (value): any /* TODO: remove any for next major */ => {
     // Note: Only support value conversion for querystring, params and header schematics
-    const converted =
-      httpPart === 'body' ? value : Value.Convert(schema, value)
+    const converted = httpPart === 'body' ? value : Value.Convert(schema, value)
     if (typeCheck.Check(converted)) {
       return { value: converted }
     }
@@ -105,7 +101,7 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({
     const errors: FastifySchemaValidationError[] = typeCheck.Errors(converted)
 
     return {
-      error: errors,
+      error: errors
     }
   }
 }
@@ -121,8 +117,8 @@ export const TypeBoxValidatorCompiler: FastifySchemaCompiler<TSchema> = ({
  * ```
  */
 export interface TypeBoxTypeProvider extends FastifyTypeProvider {
-  validator: this['schema'] extends TSchema ? Static<this['schema']> : unknown;
-  serializer: this['schema'] extends TSchema ? Static<this['schema']> : unknown;
+  validator: this['schema'] extends TSchema ? Static<this['schema']> : unknown
+  serializer: this['schema'] extends TSchema ? Static<this['schema']> : unknown
 }
 
 /**
@@ -138,8 +134,8 @@ export interface TypeBoxTypeProvider extends FastifyTypeProvider {
  * ```
  */
 export type FastifyPluginCallbackTypebox<
-  Options extends FastifyPluginOptions = Record<never, never>,
-  Server extends RawServerBase = RawServerDefault
+    Options extends FastifyPluginOptions = Record<never, never>,
+    Server extends RawServerBase = RawServerDefault
 > = FastifyPluginCallback<Options, Server, TypeBoxTypeProvider>
 
 /**
