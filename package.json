@@ -1,6 +1,6 @@
 {
   "name": "@fastify/type-provider-typebox",
-  "version": "6.1.0",
+  "version": "6.2.0",
   "description": "A Type Provider for Typebox over Fastify",
   "type": "module",
   "main": "./dist/cjs/index.js",
@@ -29,6 +29,7 @@
     "build:post": "node post-build.js",
     "build:test": "attw --pack .",
     "build": "npm-run-all build:clean build:cjs build:esm build:post build:test",
+    "release:build": "npm run build",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "test:node": "c8 --100 --include 'dist/esm/**' node --test test/index.mjs",
