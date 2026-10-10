@@ -59,9 +59,11 @@ type AjvStringFormat = true | RegExp | StringFormatValidator | {
   validate: (value: string) => boolean
 }
 
+const alwaysTrue = () => true
+
 function getFormatValidator (format: AjvStringFormat): StringFormatValidator {
   if (format === true) {
-    return () => true
+    return alwaysTrue
   }
   if (format instanceof RegExp) {
     return (value) => format.test(value)
